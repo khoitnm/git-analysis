@@ -5,42 +5,59 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.tnmk.git_analysis.analyze_effort.model.CommitChanges;
+import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
+import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import org.tnmk.git_analysis.config.AnalysisIgnore;
 import org.tnmk.tech_common.path_matcher.PathMatcherUtils;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GitHelper {
-  public static CommitChanges changedInCommit(Repository repository, RevCommit commit, AnalysisIgnore analysisIgnore) throws IOException {
+  public static CommitResult analyzeCommit(Repository repository, RevCommit commit, AnalysisIgnore analysisIgnore) throws IOException {
     try (DiffFormatter diffFormatter = new DiffFormatter(null)) {
       diffFormatter.setRepository(repository);
       diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
       diffFormatter.setDetectRenames(true);
 
       RevCommit parentCommit = commit.getParent(0);
+      Instant commitDateTime = Instant.ofEpochSecond(commit.getCommitTime());
+      String commitRevision = commit.getName();
       if (parentCommit == null) {
-        return CommitChanges.builder().lines(0).files(0).build(); // Skip the initial commit
+        // Skip the initial commit
+        return CommitResult.builder()
+          .commitRevision(commitRevision)
+          .commitDateTime(commitDateTime)
+          .files(new ArrayList<>())
+          .build();
       }
 
-      int changedFilesCount = 0;
-      int linesChanged = 0;
-
+      List<CommittedFile> files = new ArrayList<>();
       for (DiffEntry diffEntry : diffFormatter.scan(parentCommit, commit)) {
         if (PathMatcherUtils.matchAnyPattern(diffEntry.getNewPath(), analysisIgnore.getPathPatterns())) {
           continue;
         }
 
-        changedFilesCount++;
-
-        linesChanged += diffFormatter.toFileHeader(diffEntry).toEditList().stream()
+        int changedLines = diffFormatter.toFileHeader(diffEntry).toEditList().stream()
           .mapToInt(edit -> edit.getEndB() - edit.getBeginB())
           .sum();
+
+        CommittedFile file = CommittedFile.builder()
+          .newPath(diffEntry.getNewPath())
+          .changedLines(changedLines)
+
+          .commitRevision(commitRevision)
+          .commitDateTime(Instant.ofEpochSecond(commit.getCommitTime()))
+          .build();
+        files.add(file);
       }
 
-      return CommitChanges.builder()
-        .lines(linesChanged)
-        .files(changedFilesCount)
+      return CommitResult.builder()
+        .commitRevision(commit.getName())
+        .commitDateTime(commitDateTime)
+        .files(files)
         .build();
     }
   }

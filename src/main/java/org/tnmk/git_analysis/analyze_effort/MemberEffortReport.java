@@ -12,8 +12,11 @@ import java.util.List;
 @Service
 public class MemberEffortReport {
   public void report(Collection<MemberEffort> memberEfforts) {
-    Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits).reversed();
-    List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(comparator).toList();
+    Comparator<MemberEffort> memberComparator = Comparator.<MemberEffort>comparingInt(
+      // compare by the number of commits
+      member -> member.getCommits().size()
+    ).reversed();
+    List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(memberComparator).toList();
 
     StringBuilder report = new StringBuilder("Members' efforts:\n");
     sortedMemberEfforts.forEach(memberEffort -> report.append(memberEffort.toString()).append("\n"));

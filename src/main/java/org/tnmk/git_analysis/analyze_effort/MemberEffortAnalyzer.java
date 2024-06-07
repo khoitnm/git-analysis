@@ -8,7 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
-import org.tnmk.git_analysis.analyze_effort.model.CommitChanges;
+import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.MemberEffort;
 import org.tnmk.git_analysis.config.AnalysisIgnore;
 import org.tnmk.git_analysis.config.GitFolderProperties;
@@ -44,11 +44,10 @@ public class MemberEffortAnalyzer {
 
         if (commitDateTime.isAfter(oneMonthAgo)) {
           String authorName = commit.getAuthorIdent().getName();
+          CommitResult commitResult = GitHelper.analyzeCommit(repository, commit, analysisIgnore);
+
           MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
-          memberEffort.setCommits(memberEffort.getCommits() + 1);
-          CommitChanges changes = GitHelper.changedInCommit(repository, commit, analysisIgnore);
-          memberEffort.addChangedFilesCount(changes.getFiles());
-          memberEffort.addChangedLinesCount(changes.getLines());
+          memberEffort.addCommit(commitResult);
           memberEfforts.put(authorName, memberEffort);
         }
       }
