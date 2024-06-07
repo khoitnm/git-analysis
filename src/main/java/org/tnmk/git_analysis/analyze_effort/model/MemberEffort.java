@@ -18,8 +18,7 @@ public class MemberEffort {
 
   public String toString() {
     return """
-      %s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalChangedFiles: %s
-      """.formatted(name, commits, avgChangedFiles(), avgChangedFiles(), totalChangedFiles);
+      %s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalChangedFiles: %s""".formatted(name, commits, avgChangedFiles(), avgChangedFiles(), totalChangedFiles);
   }
 
   public double avgChangedFiles() {

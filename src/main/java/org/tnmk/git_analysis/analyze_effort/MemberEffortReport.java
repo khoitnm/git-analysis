@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class MemberEffortReport {
   public void report(Collection<MemberEffort> memberEfforts) {
-    Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits);
+    Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits).reversed();
     List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(comparator).toList();
 
     StringBuilder report = new StringBuilder("Members' efforts:\n");
