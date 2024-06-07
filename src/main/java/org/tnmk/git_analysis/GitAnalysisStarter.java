@@ -13,10 +13,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class GitAnalysisStarter {
 
-    private final MemberEffortAnalyzer memberEffortAnalyzer;
+  private final MemberEffortAnalyzer memberEffortAnalyzer;
 
-    @EventListener(ApplicationStartedEvent.class)
-    public void start() throws GitAPIException, IOException {
-        memberEffortAnalyzer.start();
-    }
+  @EventListener(ApplicationStartedEvent.class)
+  public void start() throws GitAPIException, IOException {
+    memberEffortAnalyzer.start();
+  }
 }

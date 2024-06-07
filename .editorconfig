@@ -3,12 +3,12 @@ root = true
 [*]
 charset = utf-8
 end_of_line = crlf
-indent_size = 4
+indent_size = 2
 indent_style = space
 insert_final_newline = true
 max_line_length = 150
-tab_width = 4
+tab_width = 2
 
 [*.java]
-indent_size = 4
+indent_size = 2
 max_line_length = 150

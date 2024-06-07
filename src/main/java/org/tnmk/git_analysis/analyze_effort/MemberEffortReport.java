@@ -11,12 +11,12 @@ import java.util.List;
 @Slf4j
 @Service
 public class MemberEffortReport {
-    public void report(Collection<MemberEffort> memberEfforts) {
-        Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits);
-        List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(comparator).toList();
+  public void report(Collection<MemberEffort> memberEfforts) {
+    Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits);
+    List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(comparator).toList();
 
-        StringBuilder report = new StringBuilder("Members' efforts:");
-        sortedMemberEfforts.forEach(memberEffort -> report.append(memberEffort.toString()).append("\n"));
-        log.error(report.toString());
-    }
+    StringBuilder report = new StringBuilder("Members' efforts:");
+    sortedMemberEfforts.forEach(memberEffort -> report.append(memberEffort.toString()).append("\n"));
+    log.error(report.toString());
+  }
 }

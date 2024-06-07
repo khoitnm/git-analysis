@@ -8,11 +8,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class MemberEffort {
-    private final String name;
-    private int commits;
-    private int pullRequests;
+  private final String name;
+  private int commits;
+  private int pullRequests;
 
-    public MemberEffort(String name) {
-        this.name = name;
-    }
+  public MemberEffort(String name) {
+    this.name = name;
+  }
 }

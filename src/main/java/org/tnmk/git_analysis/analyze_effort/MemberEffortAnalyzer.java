@@ -21,30 +21,29 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MemberEffortAnalyzer {
-    private final GitFolderProperties gitFolderProperties;
-    private final MemberEffortReport memberEffortReport;
+  private final GitFolderProperties gitFolderProperties;
+  private final MemberEffortReport memberEffortReport;
 
-    public Map<String, MemberEffort> start() throws GitAPIException, IOException {
-        try (Git git = Git.open(new File(gitFolderProperties.getPath()))) {
-            // key: member name
-            Map<String, MemberEffort> memberEfforts = new HashMap<>();
+  public void start() throws GitAPIException, IOException {
+    try (Git git = Git.open(new File(gitFolderProperties.getPath()))) {
+      // key: member name
+      Map<String, MemberEffort> memberEfforts = new HashMap<>();
 
-            LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+      LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
 
-            LogCommand logCommand = git.log();
-            for (RevCommit commit : logCommand.call()) {
-                LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
+      LogCommand logCommand = git.log();
+      for (RevCommit commit : logCommand.call()) {
+        LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
 
-                if (commitDateTime.isAfter(oneMonthAgo)) {
-                    String authorName = commit.getAuthorIdent().getName();
-                    MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
-                    memberEffort.setCommits(memberEffort.getCommits() + 1);
-                    memberEfforts.put(authorName, memberEffort);
-                }
-            }
-
-            memberEffortReport.report(memberEfforts.values());
-            return memberEfforts;
+        if (commitDateTime.isAfter(oneMonthAgo)) {
+          String authorName = commit.getAuthorIdent().getName();
+          MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
+          memberEffort.setCommits(memberEffort.getCommits() + 1);
+          memberEfforts.put(authorName, memberEffort);
         }
+      }
+
+      memberEffortReport.report(memberEfforts.values());
     }
+  }
 }  
