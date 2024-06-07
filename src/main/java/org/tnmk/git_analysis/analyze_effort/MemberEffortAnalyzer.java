@@ -10,6 +10,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommitChanges;
 import org.tnmk.git_analysis.analyze_effort.model.MemberEffort;
+import org.tnmk.git_analysis.config.AnalysisIgnore;
 import org.tnmk.git_analysis.config.GitFolderProperties;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class MemberEffortAnalyzer {
   private final GitFolderProperties gitFolderProperties;
   private final MemberEffortReport memberEffortReport;
+  private final AnalysisIgnore analysisIgnore;
 
   public void start() throws GitAPIException, IOException {
     try (
@@ -44,7 +46,7 @@ public class MemberEffortAnalyzer {
           String authorName = commit.getAuthorIdent().getName();
           MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
           memberEffort.setCommits(memberEffort.getCommits() + 1);
-          CommitChanges changes = GitHelper.changedInCommit(repository, commit);
+          CommitChanges changes = GitHelper.changedInCommit(repository, commit, analysisIgnore);
           memberEffort.addChangedFilesCount(changes.getFiles());
           memberEffort.addChangedLinesCount(changes.getLines());
           memberEfforts.put(authorName, memberEffort);
