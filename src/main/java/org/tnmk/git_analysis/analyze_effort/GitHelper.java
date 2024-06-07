@@ -12,6 +12,8 @@ import org.tnmk.tech_common.path_matcher.PathMatcherUtils;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class GitHelper {
       diffFormatter.setDetectRenames(true);
 
       RevCommit parentCommit = commit.getParent(0);
-      Instant commitDateTime = Instant.ofEpochSecond(commit.getCommitTime());
+      LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
       if (parentCommit == null) {
         // Skip the initial commit
@@ -49,7 +51,7 @@ public class GitHelper {
           .changedLines(changedLines)
 
           .commitRevision(commitRevision)
-          .commitDateTime(Instant.ofEpochSecond(commit.getCommitTime()))
+          .commitDateTime(commitDateTime)
           .build();
         files.add(file);
       }
@@ -60,7 +62,12 @@ public class GitHelper {
         .files(files)
         .build();
     }
+
+
   }
 
+  private static LocalDateTime getCommitDateTime(RevCommit commit) {
+    return Instant.ofEpochSecond(commit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+  }
 
 }

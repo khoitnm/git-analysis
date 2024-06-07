@@ -3,7 +3,7 @@ package org.tnmk.git_analysis.analyze_effort.model;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,7 +13,7 @@ public class CommitResult {
    * Aka. 'commitName'
    */
   private final String commitRevision;
-  private final Instant commitDateTime;
+  private final LocalDateTime commitDateTime;
   private final List<CommittedFile> files;
 
   public int getFilesCount() {

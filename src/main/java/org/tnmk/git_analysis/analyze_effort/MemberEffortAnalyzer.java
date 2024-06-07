@@ -9,7 +9,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
-import org.tnmk.git_analysis.analyze_effort.model.MemberEffort;
+import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.AnalysisIgnore;
 import org.tnmk.git_analysis.config.GitFolderProperties;
 
@@ -34,7 +34,7 @@ public class MemberEffortAnalyzer {
       Repository repository = git.getRepository();
     ) {
       // key: member name
-      Map<String, MemberEffort> memberEfforts = new HashMap<>();
+      Map<String, Member> memberEfforts = new HashMap<>();
 
       LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
 
@@ -46,9 +46,9 @@ public class MemberEffortAnalyzer {
           String authorName = commit.getAuthorIdent().getName();
           CommitResult commitResult = GitHelper.analyzeCommit(repository, commit, analysisIgnore);
 
-          MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
-          memberEffort.addCommit(commitResult);
-          memberEfforts.put(authorName, memberEffort);
+          Member member = memberEfforts.getOrDefault(authorName, new Member(authorName));
+          member.addCommit(commitResult);
+          memberEfforts.put(authorName, member);
         }
       }
 

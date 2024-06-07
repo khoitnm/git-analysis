@@ -9,12 +9,12 @@ import java.util.List;
 
 @Getter
 @Setter
-public class MemberEffort {
+public class Member {
   private final String name;
   private final List<CommitResult> commits;
   private int pullRequests;
 
-  public MemberEffort(String name) {
+  public Member(String name) {
     this.name = name;
     this.commits = Collections.synchronizedList(new ArrayList<>());
   }
