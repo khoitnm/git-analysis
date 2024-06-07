@@ -36,13 +36,13 @@ public class MemberEffortAnalyzer {
       // key: member name
       Map<String, Member> memberEfforts = new HashMap<>();
 
-      LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusMonths(6);
 
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
 
-        if (commitDateTime.isAfter(oneMonthAgo)) {
+        if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();
           CommitResult commitResult = GitHelper.analyzeCommit(repository, commit, analysisIgnore);
 
