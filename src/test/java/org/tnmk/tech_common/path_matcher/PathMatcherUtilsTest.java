@@ -10,7 +10,6 @@ class PathMatcherUtilsTest {
   @ParameterizedTest
   @CsvSource({
     // path                                   // pattern          // expectMatch
-    //    "target                             , glob:**/target    , true",
     "SomeFile.class                           , glob:**/*.class   , false",
     "SomeFile.class                           , glob:*.class      , true",
     "somefolder/SomeFile.class                , glob:**/*.class   , true",
@@ -18,6 +17,8 @@ class PathMatcherUtilsTest {
     "package-lock.json                        , glob:package-lock.json   , true",
     "someFolder/package-lock.json             , glob:**/package-lock.json   , true",
     "someFolder/child-folder/package-lock.json, glob:**/package-lock.json   , true",
+    "target/someFile.ts                       , glob:target/**    , true",
+    "someFolder/target/someFile.ts            , glob:**/target/** , true",
   })
   void match(String path, String pattern, boolean expectMatch) {
     boolean actualResult = PathMatcherUtils.match(path, pattern);
