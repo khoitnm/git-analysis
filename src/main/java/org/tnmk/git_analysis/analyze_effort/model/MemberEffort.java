@@ -8,8 +8,8 @@ import lombok.Setter;
 public class MemberEffort {
   private final String name;
   private int commits;
-  private int totalChangedFiles;
-  private int totalChangedLines;
+  private int totalFiles;
+  private int totalLines;
   private int pullRequests;
 
   public MemberEffort(String name) {
@@ -18,22 +18,23 @@ public class MemberEffort {
 
   public String toString() {
     return """
-      %s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalChangedFiles: %s""".formatted(name, commits, avgChangedFiles(), avgChangedFiles(), totalChangedFiles);
+      %s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalFiles: %s, totalLines: %s"""
+      .formatted(name, commits, avgFilesPerCommit(), avgLinesPerCommit(), totalFiles, totalLines);
   }
 
-  public double avgChangedFiles() {
-    return totalChangedFiles / (double) commits;
+  public double avgFilesPerCommit() {
+    return totalFiles / (double) commits;
   }
 
-  public double avgChangedLines() {
-    return totalChangedLines / (double) commits;
+  public double avgLinesPerCommit() {
+    return totalLines / (double) commits;
   }
 
   public void addChangedFilesCount(int changedFilesCount) {
-    totalChangedFiles += changedFilesCount;
+    totalFiles += changedFilesCount;
   }
 
   public void addChangedLinesCount(int lines) {
-    totalChangedLines += lines;
+    totalLines += lines;
   }
 }
