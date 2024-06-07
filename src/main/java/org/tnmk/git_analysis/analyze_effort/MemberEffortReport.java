@@ -15,8 +15,8 @@ public class MemberEffortReport {
     Comparator<MemberEffort> comparator = Comparator.comparingInt(MemberEffort::getCommits);
     List<MemberEffort> sortedMemberEfforts = memberEfforts.stream().sorted(comparator).toList();
 
-    StringBuilder report = new StringBuilder("Members' efforts:");
+    StringBuilder report = new StringBuilder("Members' efforts:\n");
     sortedMemberEfforts.forEach(memberEffort -> report.append(memberEffort.toString()).append("\n"));
-    log.error(report.toString());
+    log.info(report.toString());
   }
 }

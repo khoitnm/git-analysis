@@ -5,12 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
+import org.tnmk.git_analysis.analyze_effort.model.CommitChanges;
 import org.tnmk.git_analysis.analyze_effort.model.MemberEffort;
 import org.tnmk.git_analysis.config.GitFolderProperties;
 
@@ -46,8 +44,9 @@ public class MemberEffortAnalyzer {
           String authorName = commit.getAuthorIdent().getName();
           MemberEffort memberEffort = memberEfforts.getOrDefault(authorName, new MemberEffort(authorName));
           memberEffort.setCommits(memberEffort.getCommits() + 1);
-          int changedFilesCount = calculateChangedFilesCount(repository, commit);
-          memberEffort.addChangedFilesCount(changedFilesCount);
+          CommitChanges changes = GitHelper.changedInCommit(repository, commit);
+          memberEffort.addChangedFilesCount(changes.getFiles());
+          memberEffort.addChangedLinesCount(changes.getLines());
           memberEfforts.put(authorName, memberEffort);
         }
       }
@@ -56,24 +55,4 @@ public class MemberEffortAnalyzer {
     }
   }
 
-  private static int calculateChangedFilesCount(Repository repository, RevCommit commit) throws IOException {
-    try (DiffFormatter diffFormatter = new DiffFormatter(null)) {
-      diffFormatter.setRepository(repository);
-      diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
-      diffFormatter.setDetectRenames(true);
-
-      RevCommit parentCommit = commit.getParent(0);
-      if (parentCommit == null) {
-        return 0; // Skip the initial commit
-      }
-
-      // Calculate the number of changed files in the commit
-      int changedFilesCount = 0;
-      for (DiffEntry diffEntry : diffFormatter.scan(parentCommit, commit)) {
-        changedFilesCount++;
-      }
-
-      return changedFilesCount;
-    }
-  }
 }
