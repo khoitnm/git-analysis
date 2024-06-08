@@ -1,8 +1,8 @@
 package org.tnmk.git_analysis.analyze_effort;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
@@ -17,27 +17,20 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GitHelper {
-  public static CommitResult analyzeCommit(Repository repository, RevCommit commit, AnalysisIgnore analysisIgnore) throws IOException {
-    try (DiffFormatter diffFormatter = new DiffFormatter(null)) {
-      diffFormatter.setRepository(repository);
-      diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
-      diffFormatter.setDetectRenames(true);
+import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.createDiffFormatter;
+import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.findDiff;
 
-      RevCommit parentCommit = commit.getParent(0);
+public class GitHelper {
+  public static CommitResult analyzeCommit(Repository repository, RevCommit commit, AnalysisIgnore analysisIgnore) throws IOException, GitAPIException {
+    try (DiffFormatter diffFormatter = createDiffFormatter(repository)) {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
-      if (parentCommit == null) {
-        // Skip the initial commit
-        return CommitResult.builder()
-          .commitRevision(commitRevision)
-          .commitDateTime(commitDateTime)
-          .files(new ArrayList<>())
-          .build();
-      }
 
+      List<DiffEntry> diffEntries = findDiff(diffFormatter, commit);
+
+      // This is the list of different files in the commit.
       List<CommittedFile> files = new ArrayList<>();
-      for (DiffEntry diffEntry : diffFormatter.scan(parentCommit, commit)) {
+      for (DiffEntry diffEntry : diffEntries) {
         if (PathMatcherUtils.matchAnyPattern(diffEntry.getNewPath(), analysisIgnore.getPathPatterns())) {
           continue;
         }
@@ -62,8 +55,6 @@ public class GitHelper {
         .files(files)
         .build();
     }
-
-
   }
 
   private static LocalDateTime getCommitDateTime(RevCommit commit) {

@@ -24,6 +24,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MemberEffortAnalyzer {
+  private static final int ANALYZE_IN_MONTHS = 1;
   private final GitFolderProperties gitFolderProperties;
   private final MemberEffortReport memberEffortReport;
   private final AnalysisIgnore analysisIgnore;
@@ -36,7 +37,7 @@ public class MemberEffortAnalyzer {
       // key: member name
       Map<String, Member> memberEfforts = new HashMap<>();
 
-      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusMonths(6);
+      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusMonths(ANALYZE_IN_MONTHS);
 
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
