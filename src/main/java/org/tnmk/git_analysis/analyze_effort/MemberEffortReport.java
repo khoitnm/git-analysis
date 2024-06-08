@@ -2,8 +2,9 @@ package org.tnmk.git_analysis.analyze_effort;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
+import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
-import org.tnmk.git_analysis.analyze_effort.model.MergedMember;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
@@ -20,40 +21,65 @@ public class MemberEffortReport {
   private static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
   private static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-  public void report(Collection<MergedMember> members) {
-    Comparator<MergedMember> memberComparator = Comparator.<MergedMember>comparingInt(
+  public void report(Collection<AliasMemberInManyRepos> members) {
+    Comparator<AliasMemberInManyRepos> memberComparator = Comparator.<AliasMemberInManyRepos>comparingInt(
 //      member -> member.getCommits().size()
-      MergedMember::totalWords
+      AliasMemberInManyRepos::commitsSize
     ).reversed();
-    List<MergedMember> sortedMembers = members.stream().sorted(memberComparator).toList();
+    List<AliasMemberInManyRepos> sortedMembers = members.stream().sorted(memberComparator).toList();
 
     StringBuilder report = new StringBuilder("Members' efforts:\n");
-    sortedMembers.forEach(member -> report.append(reportOneMember(member)).append("\n"));
+    sortedMembers.forEach(oneMemberInManyRepos -> report.append(reportOneMemberInManyRepos(oneMemberInManyRepos)).append("\n"));
     log.info(report.toString());
   }
 
-  private String reportOneMember(MergedMember member) {
+  private String reportOneMemberInManyRepos(AliasMemberInManyRepos memberInManyRepos) {
     String memberOverviewReport = ("%s" +
       "\ncommits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s.")
       .formatted(
-        member.getNameAliasesLowerCases(),
-        member.commitsSize(),
-        member.avgFilesPerCommit(),
-        member.avgLinesPerCommit(),
-        member.avgWordsPerCommit(),
-        decimalFormat.format(member.totalFiles()),
-        decimalFormat.format(member.totalLines()),
-        decimalFormat.format(member.totalWords())
+        memberInManyRepos.getAliases(),
+        memberInManyRepos.commitsSize(),
+        memberInManyRepos.avgFilesPerCommit(),
+        memberInManyRepos.avgLinesPerCommit(),
+        memberInManyRepos.avgWordsPerCommit(),
+        decimalFormat.format(memberInManyRepos.totalFiles()),
+        decimalFormat.format(memberInManyRepos.totalLines()),
+        decimalFormat.format(memberInManyRepos.totalWords())
       );
-    String memberTopChangedFiles = reportTopChangedFilesOfMember(member);
-    return memberOverviewReport + " Top commits:\n" +
-      memberTopChangedFiles + "\n";
+
+    String effortInAllRepos = memberInManyRepos.getMemberInRepos().stream().map(
+      this::reportOneMemberInOneRepo
+    ).collect(Collectors.joining("\n"));
+
+    String topChangedFilesAcrossRepos = reportTopChangedFilesOfMember(memberInManyRepos);
+
+    return memberOverviewReport + "\n"
+      + "Numbers in each repo:\n"
+      + effortInAllRepos + "\n"
+      + "Top biggest changed files:\n"
+      + topChangedFilesAcrossRepos + "\n";
   }
 
-  private String reportTopChangedFilesOfMember(MergedMember member) {
+  private String reportOneMemberInOneRepo(AliasMemberInRepo member) {
+    String result = (
+      "\t" + member.getRepoPath() + "\n"
+        + "\t\tcommits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s.")
+      .formatted(
+        member.getAliasMember().commitsSize(),
+        member.getAliasMember().avgFilesPerCommit(),
+        member.getAliasMember().avgLinesPerCommit(),
+        member.getAliasMember().avgWordsPerCommit(),
+        decimalFormat.format(member.getAliasMember().totalFiles()),
+        decimalFormat.format(member.getAliasMember().totalLines()),
+        decimalFormat.format(member.getAliasMember().totalWords())
+      );
+    return result;
+  }
+
+  private String reportTopChangedFilesOfMember(AliasMemberInManyRepos member) {
     Stream<CommittedFile> files = member.commits().stream().flatMap(commit -> commit.getFiles().stream());
     List<CommittedFile> sortedFiles = files.sorted(
-      Comparator.comparingInt(CommittedFile::getChangedLines).reversed()
+      Comparator.comparingInt(CommittedFile::getChangedWords).reversed()
     ).limit(TOP_FILES_TO_REPORT_PER_MEMBER).toList();
     return reportFiles(sortedFiles);
   }
@@ -63,9 +89,9 @@ public class MemberEffortReport {
   }
 
   private String reportFile(CommittedFile file) {
-    String report = "\tlines: %s, commit: %s, date: %s, file: %s"
+    String report = "\twords: %s, commit: %s, date: %s, file: %s"
       .formatted(
-        file.getChangedLines(),
+        file.getChangedWords(),
         file.getCommitRevision(),
         commitDateTimeFormatter.format(file.getCommitDateTime()),
         file.getNewPath()

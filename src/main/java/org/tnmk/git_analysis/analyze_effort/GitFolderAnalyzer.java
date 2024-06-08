@@ -26,6 +26,9 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 public class GitFolderAnalyzer {
   private final AnalysisIgnore analysisIgnore;
 
+  /**
+   * @return Map of members: key: member name, value: member.
+   */
   public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch) throws GitAPIException, IOException {
     try (
       Git git = Git.open(new File(repoPath));

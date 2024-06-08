@@ -14,15 +14,24 @@ import java.util.List;
 public class GitAliasProperties {
   private static final String ALIAS_DELIMITER = "||";
   /**
-   * Each item is a list of aliases of one member, separate by {@link #ALIAS_DELIMITER}
+   * All authors' names exist in the same list of alias is considered the same member.
+   * <p>
+   * This field is a list of aliases groups of many members.
+   * Each item is a group of aliases of one member, separate by {@link #ALIAS_DELIMITER}.
    */
   private List<String> aliasesOfMembers;
 
   public List<List<String>> parseAliasesOfMembers() {
     List<List<String>> result = aliasesOfMembers.stream()
-      .map(aliasesOfOneMember ->
-        Arrays.stream(StringUtils.split(aliasesOfOneMember, ALIAS_DELIMITER)).map(String::toLowerCase).toList()
-      ).toList();
+      .map(this::parseAliasesOfOneMember)
+      .toList();
     return result;
+  }
+
+  private List<String> parseAliasesOfOneMember(String aliasesAsString) {
+    String[] aliasesArray = StringUtils.split(aliasesAsString, ALIAS_DELIMITER);
+    return Arrays.stream(aliasesArray)
+      .map(String::toLowerCase)
+      .toList();
   }
 }
