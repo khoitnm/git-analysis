@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 public class MemberEffortReport {
   private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 5;
   private static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
+  private static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
   public void report(Collection<Member> members) {
     Comparator<Member> memberComparator = Comparator.<Member>comparingInt(
@@ -31,16 +33,16 @@ public class MemberEffortReport {
   }
 
   private String reportOneMember(Member member) {
-    String memberOverviewReport = "%s, commits: %s, avgFiles/commit: %.02f, avgLines/commit: %.02f, avgWords/commit: %.02f, totalFiles: %s, totalLines: %s, totalWords: %s\n"
+    String memberOverviewReport = "%s, commits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s\n"
       .formatted(
         member.getName(),
         member.getCommits().size(),
         member.avgFilesPerCommit(),
         member.avgLinesPerCommit(),
         member.avgWordsPerCommit(),
-        member.totalFiles(),
-        member.totalLines(),
-        member.totalWords()
+        decimalFormat.format(member.totalFiles()),
+        decimalFormat.format(member.totalLines()),
+        decimalFormat.format(member.totalWords())
       );
     String memberTopChangedFiles = reportTopChangedFilesOfMember(member);
     return memberOverviewReport + ". Top commits:\n" +
