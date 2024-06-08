@@ -24,10 +24,9 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Service
 @RequiredArgsConstructor
 public class GitFolderAnalyzer {
-  private static final int ANALYZE_IN_WEEKS = 64;
   private final AnalysisIgnore analysisIgnore;
 
-  public Map<String, Member> analyzeOneRepo(String repoPath) throws GitAPIException, IOException {
+  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath) throws GitAPIException, IOException {
     try (
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
@@ -36,8 +35,6 @@ public class GitFolderAnalyzer {
 
       // key: member name
       Map<String, Member> members = new HashMap<>();
-
-      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
 
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
