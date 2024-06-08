@@ -39,9 +39,8 @@ public class GitDiffHelper {
   }
 
   public static List<DiffEntry> findConflictWhenMerging(DiffFormatter diffFormatter, RevCommit commit, RevCommit parent1, RevCommit parent2) throws IOException {
-    // TODO
-    List<DiffEntry> diffsParent1 = diffFormatter.scan(parent1, commit);
-    List<DiffEntry> diffsParent2 = diffFormatter.scan(parent2, commit);
+    // TODO For now, we just return empty because when merging, developers rarely change some code.
+    // In some rare cases, they'll need to resolve conflicts, but most of the time, it's just a small effort.
     return Collections.emptyList();
   }
 }
