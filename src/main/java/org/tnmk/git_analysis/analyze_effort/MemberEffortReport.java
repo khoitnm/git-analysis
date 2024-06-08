@@ -20,8 +20,8 @@ public class MemberEffortReport {
 
   public void report(Collection<Member> members) {
     Comparator<Member> memberComparator = Comparator.<Member>comparingInt(
-      // compare by the number of commits
-      member -> member.getCommits().size()
+//      member -> member.getCommits().size()
+      member -> member.totalLines()
     ).reversed();
     List<Member> sortedMembers = members.stream().sorted(memberComparator).toList();
 

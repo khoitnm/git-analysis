@@ -25,7 +25,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Service
 @RequiredArgsConstructor
 public class MemberEffortAnalyzer {
-  private static final int ANALYZE_IN_MONTHS = 1;
+  private static final int ANALYZE_IN_WEEKS = 4;
   private final GitFolderProperties gitFolderProperties;
   private final MemberEffortReport memberEffortReport;
   private final AnalysisIgnore analysisIgnore;
@@ -38,7 +38,7 @@ public class MemberEffortAnalyzer {
       // key: member name
       Map<String, Member> memberEfforts = new HashMap<>();
 
-      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusMonths(ANALYZE_IN_MONTHS);
+      LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
 
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
