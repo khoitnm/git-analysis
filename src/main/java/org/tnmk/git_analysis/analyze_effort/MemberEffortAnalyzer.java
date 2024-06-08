@@ -16,9 +16,10 @@ import org.tnmk.git_analysis.config.GitFolderProperties;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
 @Slf4j
 @Service
@@ -41,7 +42,7 @@ public class MemberEffortAnalyzer {
 
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
-        LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
+        LocalDateTime commitDateTime = getCommitDateTime(commit);
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();

@@ -11,12 +11,11 @@ import org.tnmk.git_analysis.config.AnalysisIgnore;
 import org.tnmk.tech_common.path_matcher.PathMatcherUtils;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.createDiffFormatter;
 import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.findDiff;
 
@@ -56,9 +55,4 @@ public class GitHelper {
         .build();
     }
   }
-
-  private static LocalDateTime getCommitDateTime(RevCommit commit) {
-    return Instant.ofEpochSecond(commit.getCommitTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-  }
-
 }
