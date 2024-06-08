@@ -23,4 +23,8 @@ public class CommitResult {
   public int getLinesCount() {
     return files.stream().mapToInt(CommittedFile::getChangedLines).sum();
   }
+
+  public int getWordsCount() {
+    return files.stream().mapToInt(CommittedFile::getChangedWords).sum();
+  }
 }

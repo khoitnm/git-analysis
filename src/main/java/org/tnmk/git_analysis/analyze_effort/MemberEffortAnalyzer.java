@@ -25,7 +25,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Service
 @RequiredArgsConstructor
 public class MemberEffortAnalyzer {
-  private static final int ANALYZE_IN_WEEKS = 4;
+  private static final int ANALYZE_IN_WEEKS = 64;
   private final GitFolderProperties gitFolderProperties;
   private final MemberEffortReport memberEffortReport;
   private final AnalysisIgnore analysisIgnore;
@@ -46,7 +46,7 @@ public class MemberEffortAnalyzer {
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();
-          CommitResult commitResult = GitHelper.analyzeCommit(repository, commit, analysisIgnore);
+          CommitResult commitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, analysisIgnore);
 
           Member member = memberEfforts.getOrDefault(authorName, new Member(authorName));
           member.addCommit(commitResult);

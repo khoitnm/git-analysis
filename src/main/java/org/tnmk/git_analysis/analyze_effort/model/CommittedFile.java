@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class CommittedFile {
   private final String newPath;
   private final int changedLines;
+  private final int changedWords;
   private final String commitRevision;
   private final LocalDateTime commitDateTime;
 }

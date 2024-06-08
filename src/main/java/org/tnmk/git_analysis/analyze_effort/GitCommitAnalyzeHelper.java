@@ -19,7 +19,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.createDiffFormatter;
 import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.findDiff;
 
-public class GitHelper {
+public class GitCommitAnalyzeHelper {
   public static CommitResult analyzeCommit(Repository repository, RevCommit commit, AnalysisIgnore analysisIgnore) throws IOException, GitAPIException {
     try (DiffFormatter diffFormatter = createDiffFormatter(repository)) {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
@@ -38,9 +38,12 @@ public class GitHelper {
           .mapToInt(edit -> edit.getEndB() - edit.getBeginB())
           .sum();
 
+        int changedWords = GitDiffWordHelper.countWordsChangedInFile(repository, diffFormatter, diffEntry);
+
         CommittedFile file = CommittedFile.builder()
           .newPath(diffEntry.getNewPath())
           .changedLines(changedLines)
+          .changedWords(changedWords)
 
           .commitRevision(commitRevision)
           .commitDateTime(commitDateTime)

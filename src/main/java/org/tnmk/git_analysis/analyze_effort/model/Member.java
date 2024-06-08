@@ -35,12 +35,21 @@ public class Member {
     return total;
   }
 
+  public int totalWords() {
+    int total = commits.stream().mapToInt(CommitResult::getWordsCount).sum();
+    return total;
+  }
+
   public double avgFilesPerCommit() {
     return totalFiles() / (double) commits.size();
   }
 
   public double avgLinesPerCommit() {
     return totalLines() / (double) commits.size();
+  }
+
+  public double avgWordsPerCommit() {
+    return totalWords() / (double) commits.size();
   }
 
   public void addCommit(CommitResult commit) {

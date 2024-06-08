@@ -21,7 +21,7 @@ public class MemberEffortReport {
   public void report(Collection<Member> members) {
     Comparator<Member> memberComparator = Comparator.<Member>comparingInt(
 //      member -> member.getCommits().size()
-      member -> member.totalLines()
+      member -> member.totalWords()
     ).reversed();
     List<Member> sortedMembers = members.stream().sorted(memberComparator).toList();
 
@@ -31,14 +31,17 @@ public class MemberEffortReport {
   }
 
   private String reportOneMember(Member member) {
-    String memberOverviewReport = "%s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalFiles: %s, totalLines: %s\n"
+    String memberOverviewReport = "%s, commits: %s, avgFiles: %.02f, avgLines: %.02f, avgWords: %.02f, totalFiles: %s, totalLines: %s, totalWords: %s\n"
       .formatted(
         member.getName(),
         member.getCommits().size(),
         member.avgFilesPerCommit(),
         member.avgLinesPerCommit(),
+        member.avgWordsPerCommit(),
         member.totalFiles(),
-        member.totalLines());
+        member.totalLines(),
+        member.totalWords()
+      );
     String memberTopChangedFiles = reportTopChangedFilesOfMember(member);
     return memberOverviewReport + memberTopChangedFiles + "\n";
   }
