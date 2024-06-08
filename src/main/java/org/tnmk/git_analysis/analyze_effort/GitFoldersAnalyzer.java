@@ -23,12 +23,12 @@ public class GitFoldersAnalyzer {
   private final MemberMerger mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
 
-  public void analyzeManyRepos(List<String> repoPaths) throws GitAPIException, IOException {
+  public void analyzeManyRepos(List<String> repoPaths, boolean fetch) throws GitAPIException, IOException {
     LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
     List<MergedMember> membersInAllRepos = new ArrayList<>();
     for (String repositoryPath : repoPaths) {
-      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, repositoryPath);
+      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, repositoryPath, fetch);
       mergeMembers.mergeMembers(membersInAllRepos, membersInOneRepo.values());
     }
     memberEffortReport.report(membersInAllRepos);

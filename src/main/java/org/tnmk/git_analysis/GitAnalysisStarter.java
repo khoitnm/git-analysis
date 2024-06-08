@@ -18,6 +18,6 @@ public class GitAnalysisStarter {
 
   @EventListener(ApplicationStartedEvent.class)
   public void start() throws GitAPIException, IOException {
-    gitFoldersAnalyzer.analyzeManyRepos(gitFolderProperties.getPaths());
+    gitFoldersAnalyzer.analyzeManyRepos(gitFolderProperties.getPaths(), false);
   }
 }
