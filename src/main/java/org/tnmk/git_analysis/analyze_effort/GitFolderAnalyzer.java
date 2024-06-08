@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.AnalysisIgnore;
-import org.tnmk.git_analysis.config.GitFolderProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,19 +23,19 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MemberEffortAnalyzer {
+public class GitFolderAnalyzer {
   private static final int ANALYZE_IN_WEEKS = 64;
-  private final GitFolderProperties gitFolderProperties;
-  private final MemberEffortReport memberEffortReport;
   private final AnalysisIgnore analysisIgnore;
 
-  public void start() throws GitAPIException, IOException {
+  public Map<String, Member> analyzeOneRepo(String repoPath) throws GitAPIException, IOException {
     try (
-      Git git = Git.open(new File(gitFolderProperties.getPath()));
+      Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
     ) {
+      // TODO fetch repo before analysis.
+
       // key: member name
-      Map<String, Member> memberEfforts = new HashMap<>();
+      Map<String, Member> members = new HashMap<>();
 
       LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
 
@@ -48,13 +47,13 @@ public class MemberEffortAnalyzer {
           String authorName = commit.getAuthorIdent().getName();
           CommitResult commitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, analysisIgnore);
 
-          Member member = memberEfforts.getOrDefault(authorName, new Member(authorName));
+          Member member = members.getOrDefault(authorName, new Member(authorName, repoPath));
           member.addCommit(commitResult);
-          memberEfforts.put(authorName, member);
+          members.put(authorName, member);
         }
       }
 
-      memberEffortReport.report(memberEfforts.values());
+      return members;
     }
   }
 

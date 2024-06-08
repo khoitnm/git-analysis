@@ -3,7 +3,7 @@ package org.tnmk.git_analysis.analyze_effort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
-import org.tnmk.git_analysis.analyze_effort.model.Member;
+import org.tnmk.git_analysis.analyze_effort.model.MergedMember;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
@@ -20,23 +20,24 @@ public class MemberEffortReport {
   private static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
   private static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-  public void report(Collection<Member> members) {
-    Comparator<Member> memberComparator = Comparator.<Member>comparingInt(
+  public void report(Collection<MergedMember> members) {
+    Comparator<MergedMember> memberComparator = Comparator.<MergedMember>comparingInt(
 //      member -> member.getCommits().size()
-      member -> member.totalWords()
+      MergedMember::totalWords
     ).reversed();
-    List<Member> sortedMembers = members.stream().sorted(memberComparator).toList();
+    List<MergedMember> sortedMembers = members.stream().sorted(memberComparator).toList();
 
     StringBuilder report = new StringBuilder("Members' efforts:\n");
     sortedMembers.forEach(member -> report.append(reportOneMember(member)).append("\n"));
     log.info(report.toString());
   }
 
-  private String reportOneMember(Member member) {
-    String memberOverviewReport = "%s, commits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s."
+  private String reportOneMember(MergedMember member) {
+    String memberOverviewReport = ("%s" +
+      "\ncommits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s.")
       .formatted(
-        member.getName(),
-        member.getCommits().size(),
+        member.getNameAliasesLowerCases(),
+        member.commitsSize(),
         member.avgFilesPerCommit(),
         member.avgLinesPerCommit(),
         member.avgWordsPerCommit(),
@@ -49,8 +50,8 @@ public class MemberEffortReport {
       memberTopChangedFiles + "\n";
   }
 
-  private String reportTopChangedFilesOfMember(Member member) {
-    Stream<CommittedFile> files = member.getCommits().stream().flatMap(commit -> commit.getFiles().stream());
+  private String reportTopChangedFilesOfMember(MergedMember member) {
+    Stream<CommittedFile> files = member.commits().stream().flatMap(commit -> commit.getFiles().stream());
     List<CommittedFile> sortedFiles = files.sorted(
       Comparator.comparingInt(CommittedFile::getChangedLines).reversed()
     ).limit(TOP_FILES_TO_REPORT_PER_MEMBER).toList();

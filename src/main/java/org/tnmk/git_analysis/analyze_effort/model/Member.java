@@ -11,18 +11,14 @@ import java.util.List;
 @Setter
 public class Member {
   private final String name;
+  private final String repoPath;
   private final List<CommitResult> commits;
   private int pullRequests;
 
-  public Member(String name) {
+  public Member(String name, String repoPath) {
     this.name = name;
+    this.repoPath = repoPath;
     this.commits = Collections.synchronizedList(new ArrayList<>());
-  }
-
-  public String toString() {
-    return """
-      %s, commits: %s, avgFiles: %.02f, avgLines: %.02f, totalFiles: %s, totalLines: %s"""
-      .formatted(name, commits.size(), avgFilesPerCommit(), avgLinesPerCommit(), totalFiles(), totalLines());
   }
 
   public int totalFiles() {
