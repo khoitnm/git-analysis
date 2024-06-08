@@ -33,7 +33,7 @@ public class MemberEffortReport {
   }
 
   private String reportOneMember(Member member) {
-    String memberOverviewReport = "%s, commits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s\n"
+    String memberOverviewReport = "%s, commits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s."
       .formatted(
         member.getName(),
         member.getCommits().size(),
@@ -45,7 +45,7 @@ public class MemberEffortReport {
         decimalFormat.format(member.totalWords())
       );
     String memberTopChangedFiles = reportTopChangedFilesOfMember(member);
-    return memberOverviewReport + ". Top commits:\n" +
+    return memberOverviewReport + " Top commits:\n" +
       memberTopChangedFiles + "\n";
   }
 
