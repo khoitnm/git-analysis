@@ -19,7 +19,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GitFoldersAnalyzer {
   private final GitAliasProperties gitAliasProperties;
-  private final GitFoldersLogReporter gitFoldersLogReporter;
+  private final GitFoldersLogReporter logReporter;
+  private final GitFoldersHtmlReporter htmlReporter;
   private final MemberFilter memberFilter;
   private final MemberMergerByAlias mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
@@ -45,7 +46,8 @@ public class GitFoldersAnalyzer {
     /** key: member's key in {@link  AliasMemberInManyRepos#getMemberKey()} .*/
     List<AliasMemberInManyRepos> membersInAllRepos = groupMembersFromManyReposByAliases(aliasMembersInManyRepos);
 
-    gitFoldersLogReporter.report(membersInAllRepos);
+    logReporter.report(membersInAllRepos);
+    htmlReporter.report(membersInAllRepos);
   }
 
   private List<AliasMemberInManyRepos> groupMembersFromManyReposByAliases(List<AliasMemberInRepo> aliasMembersInManyRepos) {

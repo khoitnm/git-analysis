@@ -14,6 +14,8 @@
     <spring-boot.version>3.1.1</spring-boot.version>
     <commons-io.version>2.11.0</commons-io.version>
     <poi.version>5.2.3</poi.version>
+    <jte.version>3.1.12</jte.version>
+
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
@@ -61,6 +63,16 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Generate HTML Report -->
+    <!-- https://mvnrepository.com/artifact/gg.jte/jte -->
+    <dependency>
+      <groupId>gg.jte</groupId>
+      <artifactId>jte</artifactId>
+      <version>${jte.version}</version>
+    </dependency>
+
+
   </dependencies>
 
   <dependencyManagement>
