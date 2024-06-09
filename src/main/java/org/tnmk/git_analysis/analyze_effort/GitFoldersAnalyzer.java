@@ -18,16 +18,13 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class GitFoldersAnalyzer {
-  private static final int ANALYZE_IN_WEEKS = 24;
-
   private final GitAliasProperties gitAliasProperties;
   private final MemberEffortReport memberEffortReport;
   private final MemberFilter memberFilter;
   private final MemberMergerByAlias mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
 
-  public void analyzeManyRepos(List<String> repoPaths, boolean fetch) throws GitAPIException, IOException {
-    LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
+  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();

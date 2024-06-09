@@ -63,7 +63,7 @@ public class GitFolderAnalyzer {
           members.put(authorName, member);
         }
       }
-      log.debug("\tIgnored members: " + ignoredMembers);
+      log.info("\tIgnored members: " + ignoredMembers);
       return members;
     }
   }
