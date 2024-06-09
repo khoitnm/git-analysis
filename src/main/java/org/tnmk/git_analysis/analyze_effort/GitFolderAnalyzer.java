@@ -45,6 +45,7 @@ public class GitFolderAnalyzer {
       LogCommand logCommand = git.log();
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
+//        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();
