@@ -60,18 +60,18 @@ public class GitFoldersReporter {
   }
 
   private String reportOneMemberInOneRepo(AliasMemberInRepo member) {
-    String result = (
+    String result =
       "\t" + member.getRepoPath() + "\n"
-        + "\t\tcommits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s.")
-      .formatted(
-        member.getAliasMember().commitsSize(),
-        member.getAliasMember().avgFilesPerCommit(),
-        member.getAliasMember().avgLinesPerCommit(),
-        member.getAliasMember().avgWordsPerCommit(),
-        decimalFormat.format(member.getAliasMember().totalFiles()),
-        decimalFormat.format(member.getAliasMember().totalLines()),
-        decimalFormat.format(member.getAliasMember().totalWords())
-      );
+        + "\t\ttotalWords: %s, totalLines: %s, totalFiles: %s, commits: %s, words/commit: %.01f, lines/commit: %.01f, files/commit: %.01f"
+        .formatted(
+          decimalFormat.format(member.getAliasMember().totalWords()),
+          decimalFormat.format(member.getAliasMember().totalLines()),
+          decimalFormat.format(member.getAliasMember().totalFiles()),
+          member.getAliasMember().commitsSize(),
+          member.getAliasMember().avgWordsPerCommit(),
+          member.getAliasMember().avgLinesPerCommit(),
+          member.getAliasMember().avgFilesPerCommit()
+        );
     return result;
   }
 
