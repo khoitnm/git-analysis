@@ -8,13 +8,11 @@ import org.tnmk.git_analysis.analyze_effort.model.AliasMember;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
+import org.tnmk.git_analysis.config.GitAliasProperties;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -22,7 +20,9 @@ import java.util.Map;
 public class GitFoldersAnalyzer {
   private static final int ANALYZE_IN_WEEKS = 24;
 
+  private final GitAliasProperties gitAliasProperties;
   private final MemberEffortReport memberEffortReport;
+  private final MemberFilter memberFilter;
   private final MemberMergerByAlias mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
 
@@ -31,9 +31,10 @@ public class GitFoldersAnalyzer {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();
-
+    List<List<String>> aliasesOfMembers = gitAliasProperties.parseAliasesOfMembers();
+    Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
     for (String repositoryPath : repoPaths) {
-      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, repositoryPath, fetch);
+      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
       List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
       List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
         .map(member ->

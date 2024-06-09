@@ -11,6 +11,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "git-analysis.ignore")
 @Getter
 @Setter
-public class AnalysisIgnore {
+public class GitAnalysisIgnoreProperties {
   private List<String> pathPatterns;
 }

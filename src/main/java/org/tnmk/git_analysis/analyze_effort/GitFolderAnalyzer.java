@@ -10,13 +10,15 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
-import org.tnmk.git_analysis.config.AnalysisIgnore;
+import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
@@ -24,12 +26,12 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Service
 @RequiredArgsConstructor
 public class GitFolderAnalyzer {
-  private final AnalysisIgnore analysisIgnore;
+  private final GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties;
 
   /**
    * @return Map of members: key: member name, value: member.
    */
-  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch) throws GitAPIException, IOException {
+  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException {
     try (
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
@@ -43,20 +45,25 @@ public class GitFolderAnalyzer {
       Map<String, Member> members = new HashMap<>();
 
       LogCommand logCommand = git.log();
+      Set<String> ignoredMembers = new HashSet<>();
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();
-          CommitResult commitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, analysisIgnore);
+          if (!onlyIncludeMembers.contains(authorName.toLowerCase().trim())) {
+            ignoredMembers.add(authorName);
+            continue;
+          }
+          CommitResult commitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, gitAnalysisIgnoreProperties);
 
           Member member = members.getOrDefault(authorName, new Member(authorName, repoPath));
           member.addCommit(commitResult);
           members.put(authorName, member);
         }
       }
-
+      log.debug("\tIgnored members: " + ignoredMembers);
       return members;
     }
   }
