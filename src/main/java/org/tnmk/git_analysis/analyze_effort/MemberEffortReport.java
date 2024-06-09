@@ -23,8 +23,7 @@ public class MemberEffortReport {
 
   public void report(Collection<AliasMemberInManyRepos> members) {
     Comparator<AliasMemberInManyRepos> memberComparator = Comparator.<AliasMemberInManyRepos>comparingInt(
-//      member -> member.getCommits().size()
-      AliasMemberInManyRepos::commitsSize
+      AliasMemberInManyRepos::totalWords
     ).reversed();
     List<AliasMemberInManyRepos> sortedMembers = members.stream().sorted(memberComparator).toList();
 
