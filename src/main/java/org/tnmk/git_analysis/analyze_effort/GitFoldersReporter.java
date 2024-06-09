@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-public class MemberEffortReport {
+public class GitFoldersReporter {
   private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 5;
   private static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
   private static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
@@ -34,16 +34,16 @@ public class MemberEffortReport {
 
   private String reportOneMemberInManyRepos(AliasMemberInManyRepos memberInManyRepos) {
     String memberOverviewReport = ("%s" +
-      "\ncommits: %s, files/commit: %.01f, lines/commit: %.01f, words/commit: %.01f, totalFiles: %s, totalLines: %s, totalWords: %s.")
+      "\ntotalWords: %s, totalLines: %s, totalFiles: %s, commits: %s, words/commit: %.01f, lines/commit: %.01f, files/commit: %.01f")
       .formatted(
         memberInManyRepos.getAliases(),
-        memberInManyRepos.commitsSize(),
-        memberInManyRepos.avgFilesPerCommit(),
-        memberInManyRepos.avgLinesPerCommit(),
-        memberInManyRepos.avgWordsPerCommit(),
-        decimalFormat.format(memberInManyRepos.totalFiles()),
+        decimalFormat.format(memberInManyRepos.totalWords()),
         decimalFormat.format(memberInManyRepos.totalLines()),
-        decimalFormat.format(memberInManyRepos.totalWords())
+        decimalFormat.format(memberInManyRepos.totalFiles()),
+        memberInManyRepos.commitsSize(),
+        memberInManyRepos.avgWordsPerCommit(),
+        memberInManyRepos.avgLinesPerCommit(),
+        memberInManyRepos.avgFilesPerCommit()
       );
 
     String effortInAllRepos = memberInManyRepos.getMemberInRepos().stream().map(

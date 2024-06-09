@@ -1,6 +1,7 @@
 package org.tnmk.git_analysis.analyze_effort.model;
 
 import org.springframework.util.CollectionUtils;
+import org.tnmk.git_analysis.analyze_effort.AliasMemberHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;

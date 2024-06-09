@@ -2,6 +2,7 @@ package org.tnmk.git_analysis.analyze_effort.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.tnmk.git_analysis.analyze_effort.AliasMemberHelper;
 
 import java.util.List;
 
