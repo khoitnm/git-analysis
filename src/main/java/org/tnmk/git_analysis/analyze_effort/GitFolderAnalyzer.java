@@ -8,6 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
@@ -52,7 +53,9 @@ public class GitFolderAnalyzer {
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
           String authorName = commit.getAuthorIdent().getName();
-          if (!onlyIncludeMembers.contains(authorName.toLowerCase().trim())) {
+
+          // If onlyIncludeMembers is empty, we'll analyze all members.
+          if (!CollectionUtils.isEmpty(onlyIncludeMembers) && !onlyIncludeMembers.contains(authorName.toLowerCase().trim())) {
             ignoredMembers.add(authorName);
             continue;
           }
