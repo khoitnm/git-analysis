@@ -12,6 +12,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated This class is used to write report into log message.
+ * However, it's being replaced by {@link GitFoldersHtmlReporter} which provides much more convenient UI for the end user.
+ */
+@Deprecated
 @Slf4j
 @Service
 public class GitFoldersLogReporter {
