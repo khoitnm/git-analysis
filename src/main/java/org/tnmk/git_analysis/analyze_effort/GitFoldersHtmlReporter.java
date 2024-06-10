@@ -12,10 +12,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class GitFoldersHtmlReporter {
+  public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
+  public static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
   private final TemplateEngine templateEngine;
 
   public GitFoldersHtmlReporter() {
@@ -24,9 +30,14 @@ public class GitFoldersHtmlReporter {
   }
 
   public void report(Collection<AliasMemberInManyRepos> members) throws IOException {
-    Path reportFilePath = Paths.get("report/analyze_effort.html");
+    List<AliasMemberInManyRepos> sortedMembers = GitFoldersReportHelper.sortMembersByTotalWords(members);
+    jteReport(sortedMembers, "analysis_effort.jte", "target/report/analyze_effort.html");
+  }
+
+  private <T> void jteReport(T data, String templateFile, String outputPath) throws IOException {
+    Path reportFilePath = Paths.get(outputPath);
     try (FileOutput output = new FileOutput(reportFilePath)) {
-      templateEngine.render("analysis_effort.jte", members, output);
+      templateEngine.render(templateFile, data, output);
     }
     openReportInBrowser(reportFilePath);
   }

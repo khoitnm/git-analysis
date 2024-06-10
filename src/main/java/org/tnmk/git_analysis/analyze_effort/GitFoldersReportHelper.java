@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class GitFoldersReportHelper {
-  private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 5;
+  private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 50;
 
   public static List<AliasMemberInManyRepos> sortMembersByTotalWords(Collection<AliasMemberInManyRepos> members) {
     Comparator<AliasMemberInManyRepos> memberComparator = Comparator.<AliasMemberInManyRepos>comparingInt(
