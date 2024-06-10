@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class GitAnalysisStarter {
-  private static final int ANALYZE_IN_WEEKS = 24;
+  private static final int ANALYZE_IN_WEEKS = 2;
   private final GitFolderProperties gitFolderProperties;
   private final GitFoldersAnalyzer gitFoldersAnalyzer;
 
   @EventListener(ApplicationStartedEvent.class)
   public void start() throws GitAPIException, IOException {
-//    LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
-    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
+    LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
+//    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
     gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, gitFolderProperties.getPaths(), false);
   }
 }

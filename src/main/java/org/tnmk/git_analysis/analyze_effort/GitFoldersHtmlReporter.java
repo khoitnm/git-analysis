@@ -23,6 +23,7 @@ import java.util.Map;
 public class GitFoldersHtmlReporter {
   public static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
   public static final DateTimeFormatter reportDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MMM/dd hh:mm a");
+  public static final DateTimeFormatter reportDateTimeInFileNameFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_a_hh-mm");
   public static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
   private final TemplateEngine templateEngine;
@@ -34,7 +35,8 @@ public class GitFoldersHtmlReporter {
 
   public void report(LocalDateTime startTimeToAnalyze, Collection<AliasMemberInManyRepos> members) throws IOException {
     List<AliasMemberInManyRepos> sortedMembers = GitFoldersReportHelper.sortMembersByTotalWords(members);
-    jteReport("analysis_effort.jte", "target/report/analyze_effort.html",
+    String outputFilePath = "target/report/analyze_git_" + reportDateTimeInFileNameFormatter.format(startTimeToAnalyze) + ".html";
+    jteReport("analysis_effort.jte", outputFilePath,
       Map.of(
         "fromDateTime", startTimeToAnalyze,
         "toDateTime", LocalDateTime.now(),
