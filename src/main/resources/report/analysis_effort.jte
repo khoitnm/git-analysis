@@ -2,16 +2,18 @@
 @import org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
-@import org.tnmk.git_analysis.analyze_effort.model.CommittedFile
+@import java.time.LocalDateTime
 @import java.util.List
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.dateTimeFormatter
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.commitDateTimeFormatter
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.reportDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.decimalFormat
 @param List<AliasMemberInManyRepos> members
+@param LocalDateTime fromDateTime
+@param LocalDateTime toDateTime
 
 <html lang="english">
 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css">
 <body>
-<h1>Repositories Analysis</h1>
 <style>
   body {
     background: rgba(0, 0, 0, 0.03);
@@ -19,6 +21,17 @@
 
   details {
     cursor: pointer;
+  }
+
+  .title {
+    font-size: larger;
+    padding: 20px 20px 0px 20px;
+    display: inline-block;
+  }
+
+  .sub-title {
+    font-size: smaller;
+    padding: 20px;
   }
 
   .nested-1 {
@@ -76,6 +89,9 @@
     box-shadow: inset 0px 1px 0px 0px #FFF;
   }
 </style>
+<span class="title">Repositories Analysis</span><span
+  class="sub-title">from: ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)}</span>
+
 @for (AliasMemberInManyRepos member : members)
   <div class="title-lv1">${member.getAliases().toString()}</div>
   <div class="nested-1 title-lv2">All repositories</div>
@@ -110,7 +126,7 @@
           <div class="pure-u-2-24">Words: ${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
           <div class="pure-u-2-24">Lines: ${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
           <div class="pure-u-7-24">${fileEntry.get().getCommitRevision()}</div>
-          <div class="pure-u-3-24">${dateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
+          <div class="pure-u-3-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
           <div class="pure-u-9-24">${fileEntry.get().getNewPath()}</div>
         </div>
       @endfor

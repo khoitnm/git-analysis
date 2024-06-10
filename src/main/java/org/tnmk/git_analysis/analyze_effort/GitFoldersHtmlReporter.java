@@ -13,13 +13,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GitFoldersHtmlReporter {
-  public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
+  public static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
+  public static final DateTimeFormatter reportDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm a");
   public static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
   private final TemplateEngine templateEngine;
@@ -29,12 +32,17 @@ public class GitFoldersHtmlReporter {
     this.templateEngine = TemplateEngine.create(new DirectoryCodeResolver(templateFolder), templateFolder, ContentType.Html);
   }
 
-  public void report(Collection<AliasMemberInManyRepos> members) throws IOException {
+  public void report(LocalDateTime startTimeToAnalyze, Collection<AliasMemberInManyRepos> members) throws IOException {
     List<AliasMemberInManyRepos> sortedMembers = GitFoldersReportHelper.sortMembersByTotalWords(members);
-    jteReport(sortedMembers, "analysis_effort.jte", "target/report/analyze_effort.html");
+    jteReport("analysis_effort.jte", "target/report/analyze_effort.html",
+      Map.of(
+        "fromDateTime", startTimeToAnalyze,
+        "toDateTime", LocalDateTime.now(),
+        "members", sortedMembers)
+    );
   }
 
-  private <T> void jteReport(T data, String templateFile, String outputPath) throws IOException {
+  private <T> void jteReport(String templateFile, String outputPath, Map<String, Object> data) throws IOException {
     Path reportFilePath = Paths.get(outputPath);
     try (FileOutput output = new FileOutput(reportFilePath)) {
       templateEngine.render(templateFile, data, output);

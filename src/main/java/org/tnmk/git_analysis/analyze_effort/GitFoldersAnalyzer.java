@@ -47,7 +47,7 @@ public class GitFoldersAnalyzer {
     List<AliasMemberInManyRepos> membersInAllRepos = groupMembersFromManyReposByAliases(aliasMembersInManyRepos);
 
     logReporter.report(membersInAllRepos);
-    htmlReporter.report(membersInAllRepos);
+    htmlReporter.report(startTimeToAnalyze, membersInAllRepos);
   }
 
   private List<AliasMemberInManyRepos> groupMembersFromManyReposByAliases(List<AliasMemberInRepo> aliasMembersInManyRepos) {
