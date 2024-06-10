@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -22,6 +23,7 @@ public class GitAliasProperties {
   private List<String> aliasesOfMembers;
 
   public List<List<String>> parseAliasesOfMembers() {
+    if (aliasesOfMembers == null) return Collections.emptyList();
     List<List<String>> result = aliasesOfMembers.stream()
       .map(this::parseAliasesOfOneMember)
       .toList();

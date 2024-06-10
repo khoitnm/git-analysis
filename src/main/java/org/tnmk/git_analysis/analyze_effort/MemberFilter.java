@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.config.GitAnalysisOnlyIncludeProperties;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +13,7 @@ public class MemberFilter {
 
   public Set<String> getOnlyIncludeMembers(List<List<String>> aliasesOfMembers) {
     List<String> members = onlyIncludeProperties.getMembers();
+    if (members == null) return Collections.emptySet();
     Set<String> membersAliases = new HashSet<>();
     for (String member : members) {
       Optional<List<String>> foundAliasesMatchMember = matchAnyAlias(member, aliasesOfMembers);
