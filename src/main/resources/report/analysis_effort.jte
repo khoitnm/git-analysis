@@ -4,9 +4,11 @@
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
 @import java.time.LocalDateTime
 @import java.util.List
+@import java.util.stream.Collectors
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.commitDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.reportDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.decimalFormat
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.getRepoNameFromMemberInRepo
 @param List<AliasMemberInManyRepos> members
 @param LocalDateTime fromDateTime
 @param LocalDateTime toDateTime
@@ -25,7 +27,7 @@
 
   .title {
     font-size: larger;
-    padding: 20px 20px 0px 20px;
+    padding: 20px 20px 0 20px;
     display: inline-block;
   }
 
@@ -56,8 +58,18 @@
     padding: 5px;
   }
 
-  .report-item {
+  .repo-report-item {
+    font-size: 80%;
+    padding: 5px 2px 2px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    /*box-shadow: inset 0px 1px 0px 0px #FFF;*/
+    color: #888;
+  }
+
+  .repo-report-item-main {
+    color: #000;
     font-size: 90%;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .files-container {
@@ -66,8 +78,9 @@
     overflow-wrap: break-word;
   }
 
+  /* SCROLLBAR FOR FILES-CONTAINER: BEGIN //////////////////////////////////////////////////////// */
   .files-container::-webkit-scrollbar {
-    width: 7px;
+    width: 10px;
   }
 
   .files-container::-webkit-scrollbar-track {
@@ -82,6 +95,8 @@
     background: #555;
   }
 
+  /* SCROLLBAR FOR FILES-CONTAINER: END //////////////////////////////////////////////////////// */
+
   .file-item {
     font-size: smaller;
     padding: 2px;
@@ -89,36 +104,43 @@
     box-shadow: inset 0px 1px 0px 0px #FFF;
   }
 </style>
-<span class="title">Repositories Analysis</span><span
-  class="sub-title">from: ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)}</span>
+<span class="title">Repositories Analysis</span>
+<span class="sub-title">from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)}</span>
 
 @for (AliasMemberInManyRepos member : members)
   <div class="title-lv1">${member.getAliases().toString()}</div>
-  <div class="nested-1 title-lv2">All repositories</div>
-  <div class="pure-g nested-2 report-item">
-    <div class="pure-u-1-8">Words: ${decimalFormat.format(member.totalWords())}</div>
-    <div class="pure-u-1-8">Lines: ${decimalFormat.format(member.totalLines())}</div>
-    <div class="pure-u-1-8">Files: ${decimalFormat.format(member.totalFiles())}</div>
-    <div class="pure-u-1-8">Commits: ${decimalFormat.format(member.commitsSize())}</div>
-    <div class="pure-u-1-8">Words/Commit: ${"%.1f".formatted(member.avgWordsPerCommit())}</div>
-    <div class="pure-u-1-8">Lines/Commit: ${"%.1f".formatted(member.avgLinesPerCommit())}</div>
-    <div class="pure-u-1-8">Files/Commit: ${"%.1f".formatted(member.avgFilesPerCommit())}</div>
-  </div>
-  @for (AliasMemberInRepo repo : member.getMemberInRepos())
-    <div class="nested-1 title-lv2">${repo.getRepoPath()}</div>
-    <div class="pure-g nested-2 report-item">
-      <div class="pure-u-1-8">Words: ${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
-      <div class="pure-u-1-8">Lines: ${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
-      <div class="pure-u-1-8">Files: ${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
-      <div class="pure-u-1-8">Commits: ${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
-      <div class="pure-u-1-8">Words/Commit: ${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
-      <div class="pure-u-1-8">Lines/Commit: ${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
-      <div class="pure-u-1-8">Files/Commit: ${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
+  <div class="pure-g nested-1 repo-report-item repo-report-item-main">
+    <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
+      Overall
+      @if (member.getMemberInRepos().size() == 1)
+        - ${GitFoldersReportHelper.getRepoName(member.getMemberInRepos().get(0).getRepoPath())}
+      @endif
     </div>
-  @endfor
+    <div class="pure-u-2-24">Words: ${decimalFormat.format(member.totalWords())}</div>
+    <div class="pure-u-2-24">Lines: ${decimalFormat.format(member.totalLines())}</div>
+    <div class="pure-u-2-24">Files: ${decimalFormat.format(member.totalFiles())}</div>
+    <div class="pure-u-2-24">Commits: ${decimalFormat.format(member.commitsSize())}</div>
+    <div class="pure-u-3-24">Words/Commit: ${"%.1f".formatted(member.avgWordsPerCommit())}</div>
+    <div class="pure-u-3-24">Lines/Commit: ${"%.1f".formatted(member.avgLinesPerCommit())}</div>
+    <div class="pure-u-3-24">Files/Commit: ${"%.1f".formatted(member.avgFilesPerCommit())}</div>
+  </div>
+  @if (member.getMemberInRepos().size() > 1)
+    @for (AliasMemberInRepo repo : member.getMemberInRepos())
+      <div class="pure-g nested-1 repo-report-item">
+        <div class="pure-u-6-24" title="${repo.getRepoPath()}">${GitFoldersReportHelper.getRepoName(repo.getRepoPath())}</div>
+        <div class="pure-u-2-24">Words: ${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
+        <div class="pure-u-2-24">Lines: ${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
+        <div class="pure-u-2-24">Files: ${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
+        <div class="pure-u-2-24">Commits: ${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
+        <div class="pure-u-3-24">Words/Commit: ${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
+        <div class="pure-u-3-24">Lines/Commit: ${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
+        <div class="pure-u-3-24">Files/Commit: ${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
+      </div>
+    @endfor
+  @endif
 
   <details class="nested-1" open>
-    <summary class="title-lv2">Top committed files:</summary>
+    <summary class="repo-report-item repo-report-item-main">Top committed files:</summary>
     <div class="files-container">
       @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
         <div class="pure-g file-item nested-1">

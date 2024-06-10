@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 public class GitFoldersHtmlReporter {
   public static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
-  public static final DateTimeFormatter reportDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm a");
+  public static final DateTimeFormatter reportDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MMM/dd hh:mm a");
   public static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
   private final TemplateEngine templateEngine;

@@ -6,10 +6,22 @@ import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GitFoldersReportHelper {
   private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 50;
+
+  public static String getRepoName(String repoPath) {
+    String[] split = repoPath.split("/");
+    return split[split.length - 1];
+  }
+
+  public static String getRepoNameFromMemberInRepo(AliasMemberInManyRepos memberInManyRepos) {
+    return memberInManyRepos.getMemberInRepos().stream()
+      .map(repo -> getRepoName(repo.getRepoPath()))
+      .collect(Collectors.joining(", "));
+  }
 
   public static List<AliasMemberInManyRepos> sortMembersByTotalWords(Collection<AliasMemberInManyRepos> members) {
     Comparator<AliasMemberInManyRepos> memberComparator = Comparator.<AliasMemberInManyRepos>comparingInt(

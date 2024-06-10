@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class GitAnalysisStarter {
-  private static final int ANALYZE_IN_WEEKS = 1;
+  private static final int ANALYZE_IN_WEEKS = 24;
   private final GitFolderProperties gitFolderProperties;
   private final GitFoldersAnalyzer gitFoldersAnalyzer;
 
