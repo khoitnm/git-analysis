@@ -18,7 +18,7 @@ I think everybody already aware of these things, but I still want to emphasize t
 # Note about the application logic
 
 - The application will analyze based on the branch that is currently checked out. And then, it'll analyze the commits that
-  merged into that branch. Any commit that is not merged into the branch will not be analyzed.
+  happen before the last commit in that branch. Any commit that happen after that branch will not be analyzed.
 - When you merge a branch into another branch, it basically will create a commit for that merge.
   And most of the time, you are not changing any code (except when resolving code conflict), so the application will consider that commit has 0
   changes.

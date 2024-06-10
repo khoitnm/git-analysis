@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GitFoldersReportHelper {
-  private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 50;
+  private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 1000;
 
   public static String getRepoName(String repoPath) {
     String[] split = repoPath.split("/");
