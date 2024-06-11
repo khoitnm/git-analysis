@@ -51,7 +51,10 @@ public class GitDiffHelper {
       //  we just get the latest person who made the commit before creating the PR.
       //  In the future, we may get the person who made the most changes in the PR,
       //  or even report many authors for one PR (which is more accurate, but also more complicated to implement).
-      String implementor = parents[0].getAuthorIdent().getName();
+      //
+      // As you see in the bellow logic, diff data for the PR is calculated based on difference between parents[0] vs. commit.
+      // The thing is: that difference was caused by parents[1], hence the author of PR should be parents[1].author
+      String implementor = parents[1].getAuthorIdent().getName();
       CommitType commitType;
       if (checkIsPullRequest(commit)) {
         diffEntries = diffFormatter.scan(parents[0], commit);
