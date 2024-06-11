@@ -10,7 +10,7 @@ import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
-import org.tnmk.tech_common.path_matcher.PathMatcherUtils;
+import org.tnmk.tech_common.utils.PathMatcherUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -70,6 +70,8 @@ public class GitCommitAnalyzeHelper {
       }
 
       return Optional.of(CommitResult.builder()
+        // repository.getDirectory() points to the .git folder, so we need to get the parent folder.
+        .repoPath(repository.getDirectory().getParent())
         .committer(commitDiffs.getCommitter())
         .implementor(commitDiffs.getImplementor())
         .commitRevision(commit.getName())

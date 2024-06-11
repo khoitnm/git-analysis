@@ -2,6 +2,7 @@
 @import org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
+@import org.tnmk.tech_common.utils.FilePathUtils
 @import java.time.LocalDateTime
 @import java.util.List
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.commitDateTimeFormatter
@@ -50,7 +51,7 @@
     margin-top: 20px;
     padding: 10px;
     font-weight: bold;
-    background: #29c4c3;
+    background: #009496;
     color: #EFEFEF;
   }
 
@@ -163,6 +164,26 @@
       </div>
     @endfor
   @endif
+  <details class="">
+    <summary class="repo-report-item repo-report-item-main"
+             title="Just note that it's currently include PRs from 'dev' to 'master' branch. They would be excluded in the future.">
+      All pull requests:
+    </summary>
+    <div class="files-container">
+      @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
+        <div class="pure-g file-item nested-1">
+          <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
+          <div class="pure-u-2-24">Words: ${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
+          <div class="pure-u-2-24">Lines: ${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
+          <div class="pure-u-2-24">Files: ${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
+          <div class="pure-u-6-24">${commitEntry.get().getCommitRevision()}</div>
+          <div class="pure-u-2-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
+          <div class="pure-u-4-24">Merged by: ${commitEntry.get().getCommitter()}</div>
+          <div class="pure-u-4-24">Repository: ${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
+        </div>
+      @endfor
+    </div>
+  </details>
   <details class="" open>
     <summary class="repo-report-item repo-report-item-main">Top ${GitFoldersReportHelper.TOP_FILES_TO_REPORT_PER_MEMBER} committed files:</summary>
     <div class="files-container">

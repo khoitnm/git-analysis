@@ -50,4 +50,11 @@ public class GitFoldersReportHelper {
     ).limit(TOP_FILES_TO_REPORT_PER_MEMBER).toList();
     return sortedFiles;
   }
+
+  public static List<CommitResult> sortPullRequestsByWords(AliasMemberInManyRepos member) {
+    List<CommitResult> sortedCommits = member.pullRequests().stream().sorted(
+      Comparator.comparingInt(CommitResult::getWordsCount).reversed()
+    ).toList();
+    return sortedCommits;
+  }
 }

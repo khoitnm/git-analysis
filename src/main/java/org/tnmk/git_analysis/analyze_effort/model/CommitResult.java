@@ -34,6 +34,7 @@ public class CommitResult {
   private final LocalDateTime commitDateTime;
   private final CommitType commitType;
   private final List<CommittedFile> files;
+  private final String repoPath;
 
   public int getFilesCount() {
     return files.size();

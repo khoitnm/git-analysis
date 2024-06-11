@@ -2,6 +2,7 @@ package org.tnmk.tech_common.path_matcher;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.tnmk.tech_common.utils.PathMatcherUtils;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
