@@ -27,6 +27,9 @@ public class AliasMemberInManyRepos {
     return memberInRepos.get(0).getAliasMember().getNameAliasesLowerCases();
   }
 
+  public List<CommitResult> pullRequests() {
+    return memberInRepos.stream().flatMap(memberInOneRepo -> memberInOneRepo.getAliasMember().pullRequests().stream()).toList();
+  }
 
   public List<CommitResult> commits() {
     return memberInRepos.stream().flatMap(memberInOneRepo -> memberInOneRepo.getAliasMember().commits().stream()).toList();

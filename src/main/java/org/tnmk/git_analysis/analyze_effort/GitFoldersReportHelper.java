@@ -1,6 +1,7 @@
 package org.tnmk.git_analysis.analyze_effort;
 
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
+import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 
 import java.util.Collection;
@@ -11,6 +12,18 @@ import java.util.stream.Stream;
 
 public class GitFoldersReportHelper {
   private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 1000;
+
+  public static double avgWords(Collection<CommitResult> commitResults) {
+    return commitResults.stream().mapToInt(CommitResult::getWordsCount).average().orElse(0);
+  }
+
+  public static double avgLines(Collection<CommitResult> commitResults) {
+    return commitResults.stream().mapToInt(CommitResult::getLinesCount).average().orElse(0);
+  }
+
+  public static double avgFiles(Collection<CommitResult> commitResults) {
+    return commitResults.stream().mapToInt(CommitResult::getFilesCount).average().orElse(0);
+  }
 
   public static String getRepoName(String repoPath) {
     String[] split = repoPath.split("/");

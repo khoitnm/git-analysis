@@ -4,10 +4,12 @@
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
 @import java.time.LocalDateTime
 @import java.util.List
-@import java.util.stream.Collectors
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.commitDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.reportDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.decimalFormat
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgFiles
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgLines
+@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgWords
 @import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.getRepoNameFromMemberInRepo
 @param List<AliasMemberInManyRepos> members
 @param LocalDateTime fromDateTime
@@ -108,38 +110,60 @@
 <span class="sub-title">from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)}</span>
 
 @for (AliasMemberInManyRepos member : members)
-  <div class="title-lv1">${member.getAliases().toString()}</div>
-  <div class="pure-g nested-1 repo-report-item repo-report-item-main">
+  !{var memberPullRequests = member.pullRequests();}
+  <div class="pure-g title-lv1">
+    <div class="pure-u-6-24">${member.getAliases().toString()}</div>
+    <div class="pure-u-1-24">Words</div>
+    <div class="pure-u-1-24">Lines</div>
+    <div class="pure-u-1-24">Files</div>
+    <div class="pure-u-1-24">PRs</div>
+    <div class="pure-u-2-24">Words/PR</div>
+    <div class="pure-u-2-24">Lines/PR</div>
+    <div class="pure-u-2-24">Files/PR</div>
+    <div class="pure-u-2-24">Commits</div>
+    <div class="pure-u-2-24">Words/Commit</div>
+    <div class="pure-u-2-24">Lines/Commit</div>
+    <div class="pure-u-2-24">Files/Commit</div>
+  </div>
+  <div class="pure-g repo-report-item repo-report-item-main">
     <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
       Overall
       @if (member.getMemberInRepos().size() == 1)
         - ${GitFoldersReportHelper.getRepoName(member.getMemberInRepos().get(0).getRepoPath())}
       @endif
     </div>
-    <div class="pure-u-2-24">Words: ${decimalFormat.format(member.totalWords())}</div>
-    <div class="pure-u-2-24">Lines: ${decimalFormat.format(member.totalLines())}</div>
-    <div class="pure-u-2-24">Files: ${decimalFormat.format(member.totalFiles())}</div>
-    <div class="pure-u-2-24">Commits: ${decimalFormat.format(member.commitsSize())}</div>
-    <div class="pure-u-3-24">Words/Commit: ${"%.1f".formatted(member.avgWordsPerCommit())}</div>
-    <div class="pure-u-3-24">Lines/Commit: ${"%.1f".formatted(member.avgLinesPerCommit())}</div>
-    <div class="pure-u-3-24">Files/Commit: ${"%.1f".formatted(member.avgFilesPerCommit())}</div>
+    <div class="pure-u-1-24">${decimalFormat.format(member.totalWords())}</div>
+    <div class="pure-u-1-24">${decimalFormat.format(member.totalLines())}</div>
+    <div class="pure-u-1-24">${decimalFormat.format(member.totalFiles())}</div>
+    <div class="pure-u-1-24">${memberPullRequests.size()}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(memberPullRequests))}</div>
+    <div class="pure-u-2-24">${decimalFormat.format(member.commitsSize())}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(member.avgWordsPerCommit())}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(member.avgLinesPerCommit())}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(member.avgFilesPerCommit())}</div>
   </div>
   @if (member.getMemberInRepos().size() > 1)
     @for (AliasMemberInRepo repo : member.getMemberInRepos())
-      <div class="pure-g nested-1 repo-report-item">
+      !{var repoPullRequests = repo.getAliasMember().pullRequests();}
+      <div class="pure-g repo-report-item">
         <div class="pure-u-6-24" title="${repo.getRepoPath()}">${GitFoldersReportHelper.getRepoName(repo.getRepoPath())}</div>
-        <div class="pure-u-2-24">Words: ${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
-        <div class="pure-u-2-24">Lines: ${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
-        <div class="pure-u-2-24">Files: ${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
-        <div class="pure-u-2-24">Commits: ${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
-        <div class="pure-u-3-24">Words/Commit: ${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
-        <div class="pure-u-3-24">Lines/Commit: ${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
-        <div class="pure-u-3-24">Files/Commit: ${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
+        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
+        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
+        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
+        <div class="pure-u-1-24">${repoPullRequests.size()}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(repoPullRequests))}</div>
+        <div class="pure-u-2-24">${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
       </div>
     @endfor
   @endif
-
-  <details class="nested-1" open>
+  <details class="" open>
     <summary class="repo-report-item repo-report-item-main">Top committed files:</summary>
     <div class="files-container">
       @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))

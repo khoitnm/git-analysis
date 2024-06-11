@@ -52,6 +52,12 @@ public class AliasMember {
     return nameAliasesLowerCases.stream().map(String::toLowerCase).toList();
   }
 
+  public List<CommitResult> pullRequests() {
+    return members.stream().flatMap(
+      member -> member.pullRequests().stream()
+    ).toList();
+  }
+
   public List<CommitResult> commits() {
     return members.stream().flatMap(member -> member.getCommits().stream()).toList();
   }
