@@ -25,25 +25,47 @@ public class GitDiffHelper {
   public static CommitDiffs findDiff(DiffFormatter diffFormatter, RevCommit commit) throws IOException {
     RevCommit[] parents = commit.getParents();
     List<DiffEntry> diffEntries;
+    // Parent commits are the direct previous commits.
     // If parentCommit is null, it means the commit is the first ever commit of the project.
     if (parents.length == 0) {
+      String implementor = commit.getAuthorIdent().getName();
       diffEntries = Collections.emptyList();
-      return new CommitDiffs(CommitType.INIT_COMMIT, diffEntries);
+      return CommitDiffs.builder()
+        .committer(implementor).implementor(implementor).commitType(CommitType.INIT_COMMIT).diffEntries(diffEntries)
+        .build();
     } else if (parents.length == 1) {
-      // parent commit is actually the previous commit.
+      String implementor = commit.getAuthorIdent().getName();
       diffEntries = diffFormatter.scan(parents[0], commit);
-      return new CommitDiffs(CommitType.REGULAR_COMMIT, diffEntries);
+      return CommitDiffs.builder()
+        .committer(implementor).implementor(implementor).commitType(CommitType.REGULAR_COMMIT).diffEntries(diffEntries)
+        .build();
     } else if (parents.length == 2) {
-      // If there are 2 parents, it means the current commit is the merge commit.
+      // If there are 2 parents, it means the current commit is the merge commit (which could be a regular merge or pull request).
       // And the conflicts when merging are actually the different between 2 parents.
-      boolean isPullRequest = checkIsPullRequest(commit);
-      if (isPullRequest) {
+
+      // The author of the commit is the person who merged it.
+      String committer = commit.getAuthorIdent().getName();
+
+      // The implementor is the person who actual made the changes in the previous commit that changed the code.
+      // TODO A PR may be implemented by many people, so to simplify the logic for now,
+      //  we just get the latest person who made the commit before creating the PR.
+      //  In the future, we may get the person who made the most changes in the PR,
+      //  or even report many authors for one PR (which is more accurate, but also more complicated to implement).
+      String implementor = parents[0].getAuthorIdent().getName();
+      CommitType commitType;
+      if (checkIsPullRequest(commit)) {
         diffEntries = diffFormatter.scan(parents[0], commit);
-        return new CommitDiffs(CommitType.PULL_REQUEST, diffEntries);
+        commitType = CommitType.PULL_REQUEST;
       } else {
         diffEntries = findConflictWhenMerging(diffFormatter, commit, parents[0], parents[1]);
-        return new CommitDiffs(CommitType.REGULAR_MERGE, diffEntries);
+        commitType = CommitType.REGULAR_MERGE;
       }
+      return CommitDiffs.builder()
+        .committer(committer)
+        .implementor(implementor)
+        .commitType(commitType)
+        .diffEntries(diffEntries)
+        .build();
     } else {
       throw new IllegalStateException("A commit %s should not have more than 2 parent commits: %s".formatted(commit, parents));
     }

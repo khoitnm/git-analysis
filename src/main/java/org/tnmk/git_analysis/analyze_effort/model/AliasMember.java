@@ -53,15 +53,11 @@ public class AliasMember {
   }
 
   public List<CommitResult> pullRequests() {
-    return members.stream().flatMap(
-      member -> member.pullRequests().stream()
-    ).toList();
+    return members.stream().flatMap(member -> member.getPullRequests().stream()).toList();
   }
 
   public List<CommitResult> commits() {
-    return members.stream().flatMap(
-      member -> member.getCommitsAndPRs().stream().filter(commit -> commit.getCommitType() != CommitType.PULL_REQUEST)
-    ).toList();
+    return members.stream().flatMap(member -> member.getCommits().stream()).toList();
   }
 
   public int commitsSize() {

@@ -8,18 +8,15 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
+import org.tnmk.git_analysis.analyze_effort.model.CommitType;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
@@ -52,21 +49,25 @@ public class GitFolderAnalyzer {
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
-          // TODO for PR, the author name should not be the user who merge the PR,
-          //  it should be the user who has the most commits in the PR. => but this is challenging.
-          //  so we can get the user who has the latest commit in the PR.
-          String authorName = commit.getAuthorIdent().getName();
 
-          // If onlyIncludeMembers is empty, we'll analyze all members.
-          if (!CollectionUtils.isEmpty(onlyIncludeMembers) && !onlyIncludeMembers.contains(authorName.toLowerCase().trim())) {
-            ignoredMembers.add(authorName);
+          Optional<CommitResult> foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);
+          if (foundCommitResult.isEmpty()) {
+            ignoredMembers.add(commit.getAuthorIdent().getName());
             continue;
           }
-          CommitResult commitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, gitAnalysisIgnoreProperties);
+          CommitResult commitResult = foundCommitResult.get();
 
-          Member member = members.getOrDefault(authorName, new Member(authorName, repoPath));
-          member.addCommit(commitResult);
-          members.put(authorName, member);
+          // We are counting the effort of each member, so in a PR or a merge commit,
+          // the person who spent the effort is the implementor, not the committer.
+          String implementor = commitResult.getImplementor();
+
+          Member member = members.getOrDefault(implementor, new Member(implementor, repoPath));
+          if (commitResult.getCommitType() == CommitType.PULL_REQUEST) {
+            member.addPullRequest(commitResult);
+          } else {
+            member.addCommit(commitResult);
+          }
+          members.put(implementor, member);
         }
       }
       log.info("\tIgnored members: " + ignoredMembers);
