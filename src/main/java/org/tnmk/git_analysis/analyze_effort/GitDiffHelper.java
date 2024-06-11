@@ -5,6 +5,9 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
+import org.tnmk.git_analysis.analyze_effort.model.CommitType;
+import org.tnmk.tech_common.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,23 +22,35 @@ public class GitDiffHelper {
     return diffFormatter;
   }
 
-  public static List<DiffEntry> findDiff(DiffFormatter diffFormatter, RevCommit commit) throws IOException {
+  public static CommitDiffs findDiff(DiffFormatter diffFormatter, RevCommit commit) throws IOException {
     RevCommit[] parents = commit.getParents();
     List<DiffEntry> diffEntries;
     // If parentCommit is null, it means the commit is the first ever commit of the project.
     if (parents.length == 0) {
       diffEntries = Collections.emptyList();
+      return new CommitDiffs(CommitType.INIT_COMMIT, diffEntries);
     } else if (parents.length == 1) {
       // parent commit is actually the previous commit.
       diffEntries = diffFormatter.scan(parents[0], commit);
+      return new CommitDiffs(CommitType.REGULAR_COMMIT, diffEntries);
     } else if (parents.length == 2) {
       // If there are 2 parents, it means the current commit is the merge commit.
       // And the conflicts when merging are actually the different between 2 parents.
-      diffEntries = findConflictWhenMerging(diffFormatter, commit, parents[0], parents[1]);
+      boolean isPullRequest = checkIsPullRequest(commit);
+      if (isPullRequest) {
+        diffEntries = diffFormatter.scan(parents[0], commit);
+        return new CommitDiffs(CommitType.PULL_REQUEST, diffEntries);
+      } else {
+        diffEntries = findConflictWhenMerging(diffFormatter, commit, parents[0], parents[1]);
+        return new CommitDiffs(CommitType.REGULAR_MERGE, diffEntries);
+      }
     } else {
       throw new IllegalStateException("A commit %s should not have more than 2 parent commits: %s".formatted(commit, parents));
     }
-    return diffEntries;
+  }
+
+  private static boolean checkIsPullRequest(RevCommit commit) {
+    return StringUtils.isStartWithOneOfPrefixes(commit.getFullMessage(), "Merge pull request", "Pull request");
   }
 
   public static List<DiffEntry> findConflictWhenMerging(DiffFormatter diffFormatter, RevCommit commit, RevCommit parent1, RevCommit parent2) throws IOException {

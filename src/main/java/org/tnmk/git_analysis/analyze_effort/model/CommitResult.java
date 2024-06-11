@@ -14,6 +14,7 @@ public class CommitResult {
    */
   private final String commitRevision;
   private final LocalDateTime commitDateTime;
+  private final CommitType commitType;
   private final List<CommittedFile> files;
 
   public int getFilesCount() {

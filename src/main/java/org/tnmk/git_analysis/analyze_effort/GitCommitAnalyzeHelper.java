@@ -5,6 +5,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
@@ -25,7 +26,8 @@ public class GitCommitAnalyzeHelper {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
 
-      List<DiffEntry> diffEntries = findDiff(diffFormatter, commit);
+      CommitDiffs commitDiffs = findDiff(diffFormatter, commit);
+      List<DiffEntry> diffEntries = commitDiffs.getDiffEntries();
 
       // This is the list of different files in the commit.
       List<CommittedFile> files = new ArrayList<>();
@@ -54,6 +56,7 @@ public class GitCommitAnalyzeHelper {
       return CommitResult.builder()
         .commitRevision(commit.getName())
         .commitDateTime(commitDateTime)
+        .commitType(commitDiffs.getCommitType())
         .files(files)
         .build();
     }
