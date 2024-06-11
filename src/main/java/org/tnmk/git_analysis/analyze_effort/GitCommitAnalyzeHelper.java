@@ -27,6 +27,7 @@ public class GitCommitAnalyzeHelper {
       String commitRevision = commit.getName();
 
       CommitDiffs commitDiffs = findDiff(diffFormatter, commit);
+      // TODO In some repos such as SC, must exclude merged to `master` branch because it's duplicated with PRs to dev.
       List<DiffEntry> diffEntries = commitDiffs.getDiffEntries();
 
       // This is the list of different files in the commit.
