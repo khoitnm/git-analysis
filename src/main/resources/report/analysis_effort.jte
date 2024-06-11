@@ -114,9 +114,18 @@
   !{var memberPullRequests = member.pullRequests();}
   <div class="pure-g title-lv1">
     <div class="pure-u-6-24">${member.getAliases().toString()}</div>
-    <div class="pure-u-1-24" title="Words in commit (which could be different from changed words in PR)">Words</div>
-    <div class="pure-u-1-24" title="Lines in commit (which could be different from changed lines in PR)">Lines</div>
-    <div class="pure-u-1-24" title="Files in commit (which could be different from changed files in PR)">Files</div>
+    <div class="pure-u-1-24"
+         title="Words in commit (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
+      Words
+    </div>
+    <div class="pure-u-1-24"
+         title="Lines in commit (which could be different from changed lines in PR); and it doesn't count the changes in the merge commit.">
+      Lines
+    </div>
+    <div class="pure-u-1-24"
+         title="Files in commit (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
+      Files
+    </div>
     <div class="pure-u-1-24">PRs</div>
     <div class="pure-u-2-24">Words/PR</div>
     <div class="pure-u-2-24">Lines/PR</div>
