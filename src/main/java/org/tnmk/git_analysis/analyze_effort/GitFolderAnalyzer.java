@@ -52,6 +52,9 @@ public class GitFolderAnalyzer {
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
 
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
+          // TODO for PR, the author name should not be the user who merge the PR,
+          //  it should be the user who has the most commits in the PR. => but this is challenging.
+          //  so we can get the user who has the latest commit in the PR.
           String authorName = commit.getAuthorIdent().getName();
 
           // If onlyIncludeMembers is empty, we'll analyze all members.
