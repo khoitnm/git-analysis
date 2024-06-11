@@ -175,35 +175,53 @@
   @endif
   <details class="">
     <summary class="repo-report-item repo-report-item-main"
-             title="Just note that it's currently include PRs from 'dev' to 'master' branch. They would be excluded in the future.">
-      All pull requests:
+             title="Pull Requests: Just note that it's currently include PRs from 'dev' to 'master' branch. They would be excluded in the future.">
+      Pull Requests
     </summary>
+    <div class="pure-g file-item nested-1">
+      <div class="pure-u-1-24">#</div>
+      <div class="pure-u-7-24">Folder</div>
+      <div class="pure-u-1-24">Words</div>
+      <div class="pure-u-1-24">Lines</div>
+      <div class="pure-u-1-24">Files</div>
+      <div class="pure-u-6-24">CommitId</div>
+      <div class="pure-u-3-24">DateTime</div>
+      <div class="pure-u-4-24">Merged by</div>
+    </div>
     <div class="files-container">
       @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
         <div class="pure-g file-item nested-1">
           <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
-          <div class="pure-u-4-24">${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
-          <div class="pure-u-2-24">Words: ${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
-          <div class="pure-u-2-24">Lines: ${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
-          <div class="pure-u-2-24">Files: ${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
+          <div class="pure-u-7-24">${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
           <div class="pure-u-6-24">${commitEntry.get().getCommitRevision()}</div>
-          <div class="pure-u-2-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-4-24">Merged by: ${commitEntry.get().getCommitter()}</div>
+          <div class="pure-u-3-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
+          <div class="pure-u-4-24">${commitEntry.get().getCommitter()}</div>
         </div>
       @endfor
     </div>
   </details>
   <details class="" open>
     <summary class="repo-report-item repo-report-item-main">Top ${GitFoldersReportHelper.TOP_FILES_TO_REPORT_PER_MEMBER} committed files:</summary>
+    <div class="pure-g file-item nested-1">
+      <div class="pure-u-1-24">#</div>
+      <div class="pure-u-1-24">Words</div>
+      <div class="pure-u-1-24">Lines</div>
+      <div class="pure-u-5-24">CommitId</div>
+      <div class="pure-u-2-24">DateTime</div>
+      <div class="pure-u-14-24">File</div>
+    </div>
     <div class="files-container">
       @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
         <div class="pure-g file-item nested-1">
           <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
-          <div class="pure-u-2-24">Words: ${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
-          <div class="pure-u-2-24">Lines: ${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
-          <div class="pure-u-7-24">${fileEntry.get().getCommitRevision()}</div>
-          <div class="pure-u-3-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-9-24">${fileEntry.get().getNewPath()}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
+          <div class="pure-u-5-24">${fileEntry.get().getCommitRevision()}</div>
+          <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
+          <div class="pure-u-14-24">${fileEntry.get().getNewPath()}</div>
         </div>
       @endfor
     </div>
