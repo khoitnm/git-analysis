@@ -59,11 +59,13 @@ public class AliasMember {
   }
 
   public List<CommitResult> commits() {
-    return members.stream().flatMap(member -> member.getCommits().stream()).toList();
+    return members.stream().flatMap(
+      member -> member.getCommitsAndPRs().stream().filter(commit -> commit.getCommitType() != CommitType.PULL_REQUEST)
+    ).toList();
   }
 
   public int commitsSize() {
-    return members.stream().mapToInt(member -> member.getCommits().size()).sum();
+    return commits().size();
   }
 
   public int totalFiles() {

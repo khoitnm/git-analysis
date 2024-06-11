@@ -12,19 +12,19 @@ import java.util.List;
 public class Member {
   private final String name;
   private final String repoPath;
-  private final List<CommitResult> commits;
+  private final List<CommitResult> commitsAndPRs;
 
   public Member(String name, String repoPath) {
     this.name = name;
     this.repoPath = repoPath;
-    this.commits = Collections.synchronizedList(new ArrayList<>());
+    this.commitsAndPRs = Collections.synchronizedList(new ArrayList<>());
   }
 
   public List<CommitResult> pullRequests() {
-    return this.commits.stream().filter(commit -> commit.getCommitType() == CommitType.PULL_REQUEST).toList();
+    return this.commitsAndPRs.stream().filter(commit -> commit.getCommitType() == CommitType.PULL_REQUEST).toList();
   }
 
   public void addCommit(CommitResult commit) {
-    this.commits.add(commit);
+    this.commitsAndPRs.add(commit);
   }
 }

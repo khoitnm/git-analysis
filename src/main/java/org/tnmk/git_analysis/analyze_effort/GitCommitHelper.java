@@ -10,4 +10,5 @@ public class GitCommitHelper {
     LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
     return commitDateTime;
   }
+
 }
