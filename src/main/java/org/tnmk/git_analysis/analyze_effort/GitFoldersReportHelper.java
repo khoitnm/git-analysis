@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GitFoldersReportHelper {
-  private static final int TOP_FILES_TO_REPORT_PER_MEMBER = 1000;
+  public static final int TOP_FILES_TO_REPORT_PER_MEMBER = 1000;
 
   public static double avgWords(Collection<CommitResult> commitResults) {
     return commitResults.stream().mapToInt(CommitResult::getWordsCount).average().orElse(0);

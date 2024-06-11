@@ -50,7 +50,7 @@
     margin-top: 20px;
     padding: 10px;
     font-weight: bold;
-    background: #51859b;
+    background: #29c4c3;
     color: #EFEFEF;
   }
 
@@ -113,9 +113,9 @@
   !{var memberPullRequests = member.pullRequests();}
   <div class="pure-g title-lv1">
     <div class="pure-u-6-24">${member.getAliases().toString()}</div>
-    <div class="pure-u-1-24">Words</div>
-    <div class="pure-u-1-24">Lines</div>
-    <div class="pure-u-1-24">Files</div>
+    <div class="pure-u-1-24" title="Words in commit (which could be different from changed words in PR)">Words</div>
+    <div class="pure-u-1-24" title="Lines in commit (which could be different from changed lines in PR)">Lines</div>
+    <div class="pure-u-1-24" title="Files in commit (which could be different from changed files in PR)">Files</div>
     <div class="pure-u-1-24">PRs</div>
     <div class="pure-u-2-24">Words/PR</div>
     <div class="pure-u-2-24">Lines/PR</div>
@@ -164,7 +164,7 @@
     @endfor
   @endif
   <details class="" open>
-    <summary class="repo-report-item repo-report-item-main">Top committed files:</summary>
+    <summary class="repo-report-item repo-report-item-main">Top ${GitFoldersReportHelper.TOP_FILES_TO_REPORT_PER_MEMBER} committed files:</summary>
     <div class="files-container">
       @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
         <div class="pure-g file-item nested-1">

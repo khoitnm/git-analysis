@@ -25,7 +25,9 @@ import static org.tnmk.git_analysis.analyze_effort.GitDiffHelper.findDiff;
 
 public class GitCommitAnalyzeHelper {
   /**
-   * If the commit should be ignored, return empty.
+   * If the implementor of the commit should be ignored, return empty.
+   * <strong>Note that we don't return empty in any other cases.</strong>
+   * <p/>
    * We want this method, not the parent method to decide whether we should ignore the commit or not
    * is because we don't want this method spend too much effort to analyze the commit if it should be ignored.
    */
