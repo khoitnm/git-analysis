@@ -173,13 +173,13 @@
       @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
         <div class="pure-g file-item nested-1">
           <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
+          <div class="pure-u-4-24">${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
           <div class="pure-u-2-24">Words: ${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
           <div class="pure-u-2-24">Lines: ${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
           <div class="pure-u-2-24">Files: ${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
           <div class="pure-u-6-24">${commitEntry.get().getCommitRevision()}</div>
           <div class="pure-u-2-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
           <div class="pure-u-4-24">Merged by: ${commitEntry.get().getCommitter()}</div>
-          <div class="pure-u-4-24">Repository: ${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
         </div>
       @endfor
     </div>
