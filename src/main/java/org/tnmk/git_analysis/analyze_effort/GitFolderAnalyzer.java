@@ -1,5 +1,6 @@
 package org.tnmk.git_analysis.analyze_effort;
 
+import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
@@ -12,12 +13,15 @@ import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommitType;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
+import org.tnmk.git_analysis.git_connection.GitSshHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static org.tnmk.git_analysis.analyze_effort.GitBranchHelper.getMergedCommits;
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
 @Slf4j
@@ -29,13 +33,18 @@ public class GitFolderAnalyzer {
   /**
    * @return Map of members: key: member name, value: member.
    */
-  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException {
+  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException, JSchException {
     try (
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
     ) {
       if (fetch) {
-        git.fetch().call();
+        git.fetch()
+          .setTransportConfigCallback(GitSshHelper.createTransportConfigCallback())
+//          .setCredentialsProvider(new NetRCCredentialsProvider())
+          // .setRefSpecs(new RefSpec(remoteBranchName + ":" + remoteBranchName))
+          .setTimeout(60) // Increase timeout to 60 seconds
+          .call();
         log.info("Fetched {}!", repoPath);
       }
       log.info("Analyzing {}...", repoPath);
@@ -44,6 +53,10 @@ public class GitFolderAnalyzer {
 
       LogCommand logCommand = git.log();
       Set<String> ignoredMembers = new HashSet<>();
+
+      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
+      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());

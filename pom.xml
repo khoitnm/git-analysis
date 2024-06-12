@@ -37,7 +37,12 @@
       <artifactId>org.eclipse.jgit</artifactId>
       <version>6.9.0.202403050737-r</version>
     </dependency>
-
+    <!-- Need this to connect Git hub from remote server -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+      <version>6.9.0.202403050737-r</version>
+    </dependency>
 
     <!-- For equals() and hashCode(), isNotBlank(), etc. -->
     <dependency>

@@ -1,5 +1,6 @@
 package org.tnmk.git_analysis.analyze_effort;
 
+import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -25,7 +26,7 @@ public class GitFoldersAnalyzer {
   private final MemberMergerByAlias mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
 
-  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException {
+  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException, JSchException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();

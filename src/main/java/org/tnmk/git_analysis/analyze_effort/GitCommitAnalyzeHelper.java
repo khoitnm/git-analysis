@@ -8,6 +8,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.util.CollectionUtils;
 import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
+import org.tnmk.git_analysis.analyze_effort.model.CommitType;
 import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 import org.tnmk.tech_common.utils.PathMatcherUtils;
@@ -35,7 +36,6 @@ public class GitCommitAnalyzeHelper {
     try (DiffFormatter diffFormatter = createDiffFormatter(repository)) {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
-
       CommitDiffs commitDiffs = findDiff(diffFormatter, commit);
 
       // If onlyIncludeMembers is empty, we'll analyze all members.
@@ -68,7 +68,10 @@ public class GitCommitAnalyzeHelper {
           .build();
         files.add(file);
       }
-
+      String mergeTargetBranch = null;
+      if (commitDiffs.getCommitType() == CommitType.PULL_REQUEST) {
+        mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
+      }
       return Optional.of(CommitResult.builder()
         // repository.getDirectory() points to the .git folder, so we need to get the parent folder.
         .repoPath(repository.getDirectory().getParent())
@@ -77,6 +80,7 @@ public class GitCommitAnalyzeHelper {
         .commitRevision(commit.getName())
         .commitDateTime(commitDateTime)
         .commitType(commitDiffs.getCommitType())
+        .mergedTargetBranch(mergeTargetBranch)
         .files(files)
         .build()
       );

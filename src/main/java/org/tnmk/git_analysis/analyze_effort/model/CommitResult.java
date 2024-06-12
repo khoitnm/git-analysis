@@ -1,5 +1,6 @@
 package org.tnmk.git_analysis.analyze_effort.model;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -35,6 +36,9 @@ public class CommitResult {
   private final CommitType commitType;
   private final List<CommittedFile> files;
   private final String repoPath;
+
+  @Nullable
+  private final String mergedTargetBranch;
 
   public int getFilesCount() {
     return files.size();

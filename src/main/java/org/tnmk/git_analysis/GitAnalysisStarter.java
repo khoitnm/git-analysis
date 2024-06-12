@@ -1,5 +1,6 @@
 package org.tnmk.git_analysis;
 
+import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -19,9 +20,9 @@ public class GitAnalysisStarter {
   private final GitFoldersAnalyzer gitFoldersAnalyzer;
 
   @EventListener(ApplicationStartedEvent.class)
-  public void start() throws GitAPIException, IOException {
-//    LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
-    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
-    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, gitFolderProperties.getPaths(), false);
+  public void start() throws GitAPIException, IOException, JSchException {
+    LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
+//    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
+    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, gitFolderProperties.getPaths(), true);
   }
 }
