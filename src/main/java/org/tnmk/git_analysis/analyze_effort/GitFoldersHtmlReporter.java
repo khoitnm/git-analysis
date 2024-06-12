@@ -33,13 +33,13 @@ public class GitFoldersHtmlReporter {
     this.templateEngine = TemplateEngine.create(new DirectoryCodeResolver(templateFolder), templateFolder, ContentType.Html);
   }
 
-  public void report(LocalDateTime startTimeToAnalyze, Collection<AliasMemberInManyRepos> members) throws IOException {
+  public void report(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, Collection<AliasMemberInManyRepos> members) throws IOException {
     List<AliasMemberInManyRepos> sortedMembers = GitFoldersReportHelper.sortMembersByTotalWords(members);
     String outputFilePath = "target/report/analyze_git_" + reportDateTimeInFileNameFormatter.format(startTimeToAnalyze) + ".html";
     jteReport("analysis_effort.jte", outputFilePath,
       Map.of(
         "fromDateTime", startTimeToAnalyze,
-        "toDateTime", LocalDateTime.now(),
+        "toDateTime", endTimeToAnalyze,
         "members", sortedMembers)
     );
   }

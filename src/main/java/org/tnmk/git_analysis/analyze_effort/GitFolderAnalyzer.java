@@ -33,7 +33,7 @@ public class GitFolderAnalyzer {
   /**
    * @return Map of members: key: member name, value: member.
    */
-  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException, JSchException {
+  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException, JSchException {
     try (
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
@@ -60,7 +60,14 @@ public class GitFolderAnalyzer {
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
-
+        if (commitDateTime.isBefore(startTimeToAnalyze)) {
+          // All next commits in the loop will just have before time, so we can break the loop.
+          break;
+        }
+        if (commitDateTime.isAfter(endTimeToAnalyze)) {
+          // We want it to continue to analyze commits in previous time.
+          continue;
+        }
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
 
           Optional<CommitResult> foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);

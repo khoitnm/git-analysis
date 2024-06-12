@@ -22,7 +22,8 @@ public class GitAnalysisStarter {
   @EventListener(ApplicationStartedEvent.class)
   public void start() throws GitAPIException, IOException, JSchException {
     LocalDateTime startTimeToAnalyze = LocalDateTime.now().minusWeeks(ANALYZE_IN_WEEKS);
+    LocalDateTime endTimeToAnalyze = LocalDateTime.now();
 //    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
-    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, gitFolderProperties.getPaths(), true);
+    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, endTimeToAnalyze, gitFolderProperties.getPaths(), true);
   }
 }

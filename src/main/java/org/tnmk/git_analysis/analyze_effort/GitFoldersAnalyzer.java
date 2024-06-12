@@ -26,14 +26,14 @@ public class GitFoldersAnalyzer {
   private final MemberMergerByAlias mergeMembers;
   private final GitFolderAnalyzer gitFolderAnalyzer;
 
-  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException, JSchException {
+  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException, JSchException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();
     List<List<String>> aliasesOfMembers = gitAliasProperties.parseAliasesOfMembers();
     Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
     for (String repositoryPath : repoPaths) {
-      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
+      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
       List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
       List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
         .map(member ->
@@ -48,7 +48,7 @@ public class GitFoldersAnalyzer {
     List<AliasMemberInManyRepos> membersInAllRepos = groupMembersFromManyReposByAliases(aliasMembersInManyRepos);
 
 //    logReporter.report(membersInAllRepos);
-    htmlReporter.report(startTimeToAnalyze, membersInAllRepos);
+    htmlReporter.report(startTimeToAnalyze, endTimeToAnalyze, membersInAllRepos);
   }
 
   private List<AliasMemberInManyRepos> groupMembersFromManyReposByAliases(List<AliasMemberInRepo> aliasMembersInManyRepos) {
