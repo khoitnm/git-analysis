@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.tnmk.git_analysis.analyze_effort.GitBranchHelper.getMergedCommits;
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
 @Slf4j
@@ -29,6 +27,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @RequiredArgsConstructor
 public class GitFolderAnalyzer {
   private final GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties;
+  private final GitPullRequestService gitPullRequestService;
 
   /**
    * @return Map of members: key: member name, value: member.
@@ -39,6 +38,7 @@ public class GitFolderAnalyzer {
       Repository repository = git.getRepository();
     ) {
       if (fetch) {
+
         git.fetch()
           .setTransportConfigCallback(GitSshHelper.createTransportConfigCallback())
 //          .setCredentialsProvider(new NetRCCredentialsProvider())
@@ -54,8 +54,11 @@ public class GitFolderAnalyzer {
       LogCommand logCommand = git.log();
       Set<String> ignoredMembers = new HashSet<>();
 
-      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
-      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+//      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
+//      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
+      log.info("PullRequests: \n" + pullRequests);
+
 
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);

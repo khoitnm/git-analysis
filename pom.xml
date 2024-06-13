@@ -37,12 +37,21 @@
       <artifactId>org.eclipse.jgit</artifactId>
       <version>6.9.0.202403050737-r</version>
     </dependency>
-    <!-- Need this to connect Git hub from remote server -->
+    <!-- Need this to connect Git's remote branches -->
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
       <version>6.9.0.202403050737-r</version>
     </dependency>
+
+    <!-- Need this to get PullRequests from BitBucket server -->
+    <dependency>
+      <groupId>com.atlassian.bitbucket.server</groupId>
+      <artifactId>bitbucket-api</artifactId>
+      <version>9.0.0-plat-7-m20</version>
+      <scope>provided</scope>
+    </dependency>
+
 
     <!-- For equals() and hashCode(), isNotBlank(), etc. -->
     <dependency>
@@ -76,8 +85,6 @@
       <artifactId>jte</artifactId>
       <version>${jte.version}</version>
     </dependency>
-
-
   </dependencies>
 
   <dependencyManagement>
@@ -91,6 +98,23 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <!-- this repository is for BitBucket API -->
+      <id>atlassian-public</id>
+      <url>https://packages.atlassian.com/maven/repository/public</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
