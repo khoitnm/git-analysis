@@ -7,7 +7,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
 import org.tnmk.git_analysis.analyze_effort.model.CommitType;
-import org.tnmk.tech_common.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -56,7 +55,7 @@ public class GitDiffHelper {
       // The thing is: that difference was caused by parents[1], hence the author of PR should be parents[1].author
       String implementor = parents[1].getAuthorIdent().getName();
       CommitType commitType;
-      if (checkIsPullRequest(commit)) {
+      if (GitPullRequestHelper.isPullRequest(commit)) {
         diffEntries = diffFormatter.scan(parents[0], commit);
         commitType = CommitType.PULL_REQUEST;
       } else {
@@ -72,10 +71,6 @@ public class GitDiffHelper {
     } else {
       throw new IllegalStateException("A commit %s should not have more than 2 parent commits: %s".formatted(commit, parents));
     }
-  }
-
-  private static boolean checkIsPullRequest(RevCommit commit) {
-    return StringUtils.isStartWithOneOfPrefixes(commit.getFullMessage(), "Merge pull request", "Pull request");
   }
 
   public static List<DiffEntry> findConflictWhenMerging(DiffFormatter diffFormatter, RevCommit commit, RevCommit parent1, RevCommit parent2) throws IOException {

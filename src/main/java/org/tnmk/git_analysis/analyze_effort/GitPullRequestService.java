@@ -1,7 +1,11 @@
 package org.tnmk.git_analysis.analyze_effort;
 
 import lombok.RequiredArgsConstructor;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.config.GitRepoApiConnectionProperties;
 
@@ -10,11 +14,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.tnmk.git_analysis.analyze_effort.GitPullRequestHelper.isPullRequest;
 
 @Service
 @RequiredArgsConstructor
 public class GitPullRequestService {
   private final GitApiConnectionService gitApiConnectionService;
+
+  public List<RevCommit> getPullRequestsOnBranch(Git git, Repository repository, String branch) throws GitAPIException, IOException {
+    List<RevCommit> mergeCommits = new ArrayList<>();
+
+    ObjectId objectId = repository.resolve("refs/remotes/origin/" + branch);
+    Iterable<RevCommit> commits = git.log().add(objectId).call();
+
+    for (RevCommit commit : commits) {
+      if (isPullRequest(commit)) {
+        mergeCommits.add(commit);
+      }
+    }
+
+    return mergeCommits;
+  }
 
   public String getPullRequestsFromBitBucket(Repository repository) throws IOException {
     String remoteUrl = repository.getConfig().getString("remote", "origin", "url");

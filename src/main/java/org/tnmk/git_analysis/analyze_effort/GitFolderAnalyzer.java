@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
@@ -56,8 +57,10 @@ public class GitFolderAnalyzer {
 
 //      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
 //      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
-      log.info("PullRequests: \n" + pullRequests);
+      List<RevCommit> pullRequests = gitPullRequestService.getPullRequestsOnBranch(git, repository, "dev");
+      log.info("PRs on dev branch: \n" + pullRequests.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+//      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
+//      log.info("PullRequests: \n" + pullRequests);
 
 
       for (RevCommit commit : logCommand.call()) {
