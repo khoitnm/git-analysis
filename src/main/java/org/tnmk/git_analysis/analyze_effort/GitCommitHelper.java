@@ -7,8 +7,12 @@ import java.time.ZoneId;
 
 public class GitCommitHelper {
   public static LocalDateTime getCommitDateTime(RevCommit commit) {
-    LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
-    return commitDateTime;
+    try {
+      LocalDateTime commitDateTime = LocalDateTime.ofInstant(commit.getAuthorIdent().getWhen().toInstant(), ZoneId.systemDefault());
+      return commitDateTime;
+    } catch (RuntimeException ex) {
+      throw new IllegalStateException("Cannot get commit date time of commit: " + commit.getName(), ex);
+    }
   }
 
 }

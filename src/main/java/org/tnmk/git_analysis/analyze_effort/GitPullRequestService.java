@@ -45,7 +45,9 @@ public class GitPullRequestService {
     RevCommit commit;
     try (RevWalk revWalk = new RevWalk(repository)) {
       commit = revWalk.parseCommit(objectId);
-
+      if (commit == null) {
+        throw new IllegalStateException("Cannot find the commit of the objectId: " + objectId.getName());
+      }
       do {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
         if (commitDateTime.isBefore(startTimeToAnalyze)) {
@@ -63,6 +65,8 @@ public class GitPullRequestService {
           Optional<RevCommit> suitableParentCommit = findParentCommitFromDev(revWalk, parents);
           commit = suitableParentCommit.orElse(null);
         }
+        // Make sure all data of commit is populated.
+        commit = revWalk.parseCommit(commit);
       } while (commit != null);
     }
     return Optional.of(mergeCommits);
