@@ -9,6 +9,7 @@ import org.tnmk.git_analysis.analyze_effort.model.AliasMember;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
+import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter;
 import org.tnmk.git_analysis.config.GitAliasProperties;
 
 import java.io.IOException;

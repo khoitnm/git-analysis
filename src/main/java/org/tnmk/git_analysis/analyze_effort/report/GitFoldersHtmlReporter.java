@@ -1,4 +1,4 @@
-package org.tnmk.git_analysis.analyze_effort;
+package org.tnmk.git_analysis.analyze_effort.report;
 
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;

@@ -1,4 +1,4 @@
-package org.tnmk.git_analysis.analyze_effort;
+package org.tnmk.git_analysis.analyze_effort.report;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

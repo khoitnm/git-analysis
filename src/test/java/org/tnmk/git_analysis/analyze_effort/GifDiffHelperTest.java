@@ -7,11 +7,15 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.jupiter.api.Test;
+import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Slf4j
 class GifDiffHelperTest {
@@ -22,10 +26,18 @@ class GifDiffHelperTest {
 
       DiffFormatter diffFormatter = GitDiffHelper.createDiffFormatter(repository);
       RevCommit commit = repository.parseCommit(repository.resolve("someCommitRevision"));
-      List<DiffEntry> diffEntries = GitDiffHelper.findDiff(diffFormatter, commit);
+      CommitDiffs commitDiffs = GitDiffHelper.findDiff(diffFormatter, commit);
       log.info("Diffs:\n" +
-        diffEntries.stream().map(DiffEntry::toString).collect(Collectors.joining("\n"))
+        commitDiffs.getDiffEntries().stream().map(DiffEntry::toString).collect(Collectors.joining("\n"))
       );
     }
+  }
+
+  @Test
+  public void test2() {
+    LocalDateTime startDateTime = LocalDateTime.of(2024, 11, 1, 0, 0, 0);
+    LocalDateTime endDateTime = LocalDateTime.of(2024, 11, 1, 23, 0, 0).plusDays(1);
+    long days = Duration.between(startDateTime, endDateTime).toDays();
+    assertThat(days).isEqualTo(1);
   }
 }

@@ -1,4 +1,4 @@
-package org.tnmk.git_analysis.analyze_effort;
+package org.tnmk.git_analysis.analyze_effort.report;
 
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;

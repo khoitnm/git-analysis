@@ -1,17 +1,17 @@
 @import gg.jte.support.ForSupport
-@import org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper
+@import org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
 @import org.tnmk.tech_common.utils.FilePathUtils
 @import java.time.LocalDateTime
 @import java.util.List
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.commitDateTimeFormatter
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.reportDateTimeFormatter
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersHtmlReporter.decimalFormat
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgFiles
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgLines
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.avgWords
-@import static org.tnmk.git_analysis.analyze_effort.GitFoldersReportHelper.getRepoNameFromMemberInRepo
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.commitDateTimeFormatter
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.reportDateTimeFormatter
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.decimalFormat
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper.avgFiles
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper.avgLines
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper.avgWords
+@import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper.getRepoNameFromMemberInRepo
 @param List<AliasMemberInManyRepos> members
 @param LocalDateTime fromDateTime
 @param LocalDateTime toDateTime
