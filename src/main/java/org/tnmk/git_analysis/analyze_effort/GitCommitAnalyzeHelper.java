@@ -48,6 +48,9 @@ public class GitCommitAnalyzeHelper {
       // This is the list of different files in the commit.
       List<CommittedFile> files = new ArrayList<>();
       for (DiffEntry diffEntry : diffEntries) {
+        if (diffEntry.getChangeType() == DiffEntry.ChangeType.DELETE) {
+          continue;
+        }
         if (PathMatcherUtils.matchAnyPattern(diffEntry.getNewPath(), gitAnalysisIgnoreProperties.getPathPatterns())) {
           continue;
         }
