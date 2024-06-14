@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
@@ -55,14 +56,7 @@ public class GitFolderAnalyzer {
       LogCommand logCommand = git.log();
       Set<String> ignoredMembers = new HashSet<>();
 
-//      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
-//      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-      List<RevCommit> pullRequests = gitPullRequestService.getPullRequestsOnBranch(git, repository, "dev");
-      log.info("PRs on dev branch: \n" + pullRequests.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-//      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
-//      log.info("PullRequests: \n" + pullRequests);
-
-
+      List<RevCommit> allPullRequests = new ArrayList<>();
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
@@ -90,15 +84,35 @@ public class GitFolderAnalyzer {
           Member member = members.getOrDefault(implementor, new Member(implementor, repoPath));
           if (commitResult.getCommitType() == CommitType.PULL_REQUEST) {
             member.addPullRequest(commitResult);
+            allPullRequests.add(commit);
           } else {
             member.addCommit(commitResult);
           }
           members.put(implementor, member);
         }
       }
+      filterPullRequests(git, repository, allPullRequests);
+//      log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
       log.info("\tIgnored members: " + ignoredMembers);
       return members;
     }
+  }
+
+  private void filterPullRequests(Git git, Repository repository, List<RevCommit> allPullRequests) throws GitAPIException, IOException {
+
+//      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
+//      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnBranch(git, repository, "dev");
+    List<String> pullRequestNamesOnDev = pullRequestsOnDev.stream().map(AnyObjectId::getName).toList();
+//      log.info("PRs on dev branch: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+//      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
+//      log.info("PullRequests: \n" + pullRequests);
+
+    List<RevCommit> pullRequestsOnMaster = allPullRequests.stream().filter(
+      c -> !pullRequestNamesOnDev.contains(c.getName())
+    ).collect(Collectors.toList());
+    log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")) + "\n\n");
+    log.info("Pull Requests on Dev: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
   }
 
 }
