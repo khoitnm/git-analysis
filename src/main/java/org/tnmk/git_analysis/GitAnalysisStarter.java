@@ -27,6 +27,6 @@ public class GitAnalysisStarter {
     LocalDateTime startTimeToAnalyze = gitAnalysisDateRangeProperties.getStartDate();
     LocalDateTime endTimeToAnalyze = gitAnalysisDateRangeProperties.getEndDate();
 //    LocalDateTime startTimeToAnalyze = LocalDateTime.of(2024, 1, 1, 0, 0);
-    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, endTimeToAnalyze, gitFolderProperties.getPaths(), true);
+    gitFoldersAnalyzer.analyzeManyRepos(startTimeToAnalyze, endTimeToAnalyze, gitFolderProperties.getPaths(), false);
   }
 }

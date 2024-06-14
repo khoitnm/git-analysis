@@ -102,7 +102,7 @@ public class GitFolderAnalyzer {
 
 //      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
 //      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnBranch(git, repository, "dev");
+    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnDev(repository);
     List<String> pullRequestNamesOnDev = pullRequestsOnDev.stream().map(AnyObjectId::getName).toList();
 //      log.info("PRs on dev branch: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
 //      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);

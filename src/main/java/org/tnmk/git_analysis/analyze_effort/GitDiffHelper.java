@@ -69,7 +69,7 @@ public class GitDiffHelper {
         .diffEntries(diffEntries)
         .build();
     } else {
-      throw new IllegalStateException("A commit %s should not have more than 2 parent commits: %s".formatted(commit, parents));
+      throw new IllegalStateException("Commit %s has more than 2 parent commits, please recheck your logic here for this special case: %s".formatted(commit, parents));
     }
   }
 
