@@ -3,6 +3,7 @@ package org.tnmk.git_analysis.analyze_effort;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -11,15 +12,23 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
 public class GitBranchHelper {
 
-  private static final Map<RevCommit, List<String>> cache = new HashMap<>();
+  public static Optional<ObjectId> resolveOneOfBranches(Repository repository, String... branches) throws IOException {
+    ObjectId objectId;
+    for (String branch : branches) {
+      objectId = repository.resolve(branch);
+      if (objectId != null) {
+        return Optional.of(objectId);
+      }
+    }
+    return Optional.empty();
+  }
 
   public static String getTargetBranchOfMerge(Repository repository, RevCommit mergeCommit) throws IOException, GitAPIException {
     try (Git git = new Git(repository)) {

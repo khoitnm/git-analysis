@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDateTime;
 
@@ -56,7 +55,8 @@ public class GitFolderAnalyzer {
       LogCommand logCommand = git.log();
       Set<String> ignoredMembers = new HashSet<>();
 
-      List<RevCommit> allPullRequests = new ArrayList<>();
+      Optional<List<RevCommit>> pullRequestsOnDevOptional = gitPullRequestService.getPullRequestsOnDev(startTimeToAnalyze, repository);
+      Optional<List<String>> pullRequestNamesOnDev = pullRequestsOnDevOptional.map(prsOnDev -> prsOnDev.stream().map(AnyObjectId::getName).toList());
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
 //        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
@@ -83,36 +83,37 @@ public class GitFolderAnalyzer {
 
           Member member = members.getOrDefault(implementor, new Member(implementor, repoPath));
           if (commitResult.getCommitType() == CommitType.PULL_REQUEST) {
-            member.addPullRequest(commitResult);
-            allPullRequests.add(commit);
+            // We don't want to count the PR that's used to deploy (let's call them 'deploymentPR):
+            // Those PRs has a lot of code from different branches that's contributed from many people.
+            // But the merger may not the contributor of those code.
+            //
+            // So we only count the PRs that are merged to the dev branch which are not the deploymentPRs, they are the real implementationPRs.
+            // If there's no dev branch, it means all implementationPRs are on master.
+            // So just add them to the member's contribution.
+            if (pullRequestNamesOnDev.isEmpty() || pullRequestNamesOnDev.get().contains(commit.getName())) {
+              member.addPullRequestOnDev(commitResult);
+            }
           } else {
             member.addCommit(commitResult);
           }
           members.put(implementor, member);
         }
       }
-      filterPullRequests(git, repository, allPullRequests);
+//      filterPullRequests(repository, allPullRequests);
 //      log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
       log.info("\tIgnored members: " + ignoredMembers);
       return members;
     }
   }
 
-  private void filterPullRequests(Git git, Repository repository, List<RevCommit> allPullRequests) throws GitAPIException, IOException {
-
-//      List<RevCommit> commitsInMainBranch = getMergedCommits(startTimeToAnalyze, git);
-//      log.info("\tCommits in main branch: \n" + commitsInMainBranch.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnDev(repository);
-    List<String> pullRequestNamesOnDev = pullRequestsOnDev.stream().map(AnyObjectId::getName).toList();
-//      log.info("PRs on dev branch: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-//      String pullRequests = gitPullRequestService.getPullRequestsFromBitBucket(repository);
-//      log.info("PullRequests: \n" + pullRequests);
-
-    List<RevCommit> pullRequestsOnMaster = allPullRequests.stream().filter(
-      c -> !pullRequestNamesOnDev.contains(c.getName())
-    ).collect(Collectors.toList());
-    log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")) + "\n\n");
-    log.info("Pull Requests on Dev: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-  }
+//  private void filterPullRequests(Repository repository, List<RevCommit> allPullRequests) throws GitAPIException, IOException {
+//    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnDev(startTimeToAnalyze, endTimeToAnalyze, repository);
+//    List<String> pullRequestNamesOnDev = pullRequestsOnDev.stream().map(AnyObjectId::getName).toList();
+//    List<RevCommit> pullRequestsOnMaster = allPullRequests.stream().filter(
+//      c -> !pullRequestNamesOnDev.contains(c.getName())
+//    ).collect(Collectors.toList());
+//    log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")) + "\n\n");
+//    log.info("Pull Requests on Dev: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
+//  }
 
 }

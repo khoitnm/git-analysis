@@ -2,7 +2,6 @@ package org.tnmk.git_analysis.analyze_effort;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -27,15 +26,31 @@ import static org.tnmk.git_analysis.analyze_effort.GitPullRequestHelper.isPullRe
 public class GitPullRequestService {
   private final GitApiConnectionService gitApiConnectionService;
 
-  public List<RevCommit> getPullRequestsOnDev(Repository repository) throws GitAPIException, IOException {
-    List<RevCommit> mergeCommits = new ArrayList<>();
+  /**
+   * @return if dev branch doesn't exist, return Optional.empty().
+   * Otherwise, return the list of PRs on the dev branch, and that list could be empty, or could have some values.
+   */
+  public Optional<List<RevCommit>> getPullRequestsOnDev(LocalDateTime startTimeToAnalyze, Repository repository) throws IOException {
 
-    ObjectId objectId = repository.resolve("refs/remotes/origin/dev");
+    ObjectId objectId = GitBranchHelper.resolveOneOfBranches(repository,
+      "refs/remotes/origin/dev",
+      "refs/remotes/origin/development",
+      "refs/remotes/origin/develop",
+      "refs/remotes/origin/qa"
+    ).orElse(null);
+    if (objectId == null) {
+      return Optional.empty();
+    }
+    List<RevCommit> mergeCommits = new ArrayList<>();
     RevCommit commit;
     try (RevWalk revWalk = new RevWalk(repository)) {
       commit = revWalk.parseCommit(objectId);
 
       do {
+        LocalDateTime commitDateTime = getCommitDateTime(commit);
+        if (commitDateTime.isBefore(startTimeToAnalyze)) {
+          break;
+        }
         if (isPullRequest(commit)) {
           mergeCommits.add(commit);
         }
@@ -50,7 +65,7 @@ public class GitPullRequestService {
         }
       } while (commit != null);
     }
-    return mergeCommits;
+    return Optional.of(mergeCommits);
   }
 
   /**

@@ -24,7 +24,8 @@ public class Member {
     this.commits.add(commit);
   }
 
-  public void addPullRequest(CommitResult pullRequest) {
+  public void addPullRequestOnDev(CommitResult pullRequest) {
     this.pullRequests.add(pullRequest);
   }
+
 }

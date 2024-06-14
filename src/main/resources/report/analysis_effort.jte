@@ -227,5 +227,6 @@
     </div>
   </details>
 @endfor
+
 </body>
 </html>
