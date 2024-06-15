@@ -14,6 +14,7 @@ public class PlotlyData {
   private List<LocalDate> x;  // Dates
   private List<String> y;  // Days of the week
   private int[][] z;  // Number of commits
+  private String[][] texts;
 
   public String getXAsString() {
     String result = x.stream().map(date -> "'" + date.format(GitFoldersHtmlReporter.chartDateTimeFormatter) + "'").collect(Collectors.joining(",", "[", "]"));

@@ -248,10 +248,21 @@
     @for(int i = 0; i < plotlyData.getX().size(); i++)
     x.push('${plotlyData.getX().get(i).format(GitFoldersHtmlReporter.chartDateTimeFormatter)}');
     @endfor
+
     var y = [];
     @for(int i = 0; i < plotlyData.getY().size(); i++)
     y.push('${plotlyData.getY().get(i)}');
     @endfor
+
+    var texts = [];
+    @for(int i = 0; i < plotlyData.getTexts().length; i++)
+    var itext = [];
+    @for(int j = 0; j < plotlyData.getTexts()[i].length; j++)
+    itext.push('${plotlyData.getTexts()[i][j]}');
+    @endfor
+    texts.push(itext);
+    @endfor
+    
     var data_${memberKey} = [
       // {
       //   z: [[10, 20, 30, 40, 50], [20, 30, 40, 50, 60], [30, 40, 50, 60, 70], [40, 50, 60, 70, 80]],
@@ -263,7 +274,9 @@
         z: ${plotlyData.getZAsString()},
         x: x,
         y: y,
-        type: 'heatmap'
+        type: 'heatmap',
+        text: texts,
+        hoverinfo: 'text'
       }
     ];
 

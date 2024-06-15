@@ -2,6 +2,7 @@ package org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart;
 
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
+import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter;
 import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.CommitsInDay;
 import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.PlotlyData;
 
@@ -10,7 +11,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GitCommitPerDayChartHelper {
 
@@ -21,27 +24,40 @@ public class GitCommitPerDayChartHelper {
 
   public static PlotlyData convertCommitsInDaysToPlotlyData(LocalDate startDate, LocalDate endDate, List<CommitsInDay> commitsInDays) {
     PlotlyData plotlyData = new PlotlyData();
-    List<LocalDate> x = new ArrayList<>();
-    List<String> y = List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
-    int days = (int) Duration.between(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay()).toDays();
-    int[][] z = new int[7][days];
 
+    DayOfWeek startDayOfWeek = startDate.getDayOfWeek();
+    List<String> y = new ArrayList<>(7);
+    Map<DayOfWeek, Integer> daysOfWeekMapToIndex = new HashMap<>();
+    for (int i = 0; i < 7; i++) {
+      DayOfWeek dayOfWeek = startDayOfWeek.plus(i);
+      y.add(dayOfWeek.toString());
+      daysOfWeekMapToIndex.put(dayOfWeek, i);
+    }
+
+    List<LocalDate> x = new ArrayList<>();
+    int days = (int) Duration.between(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay()).toDays();
+    int weeks = (int) Math.ceil(days / 7d);
+    for (int i = 0; i < weeks; i++) {
+      x.add(startDate.plusDays(i * 7L));
+    }
+
+    int[][] z = new int[7][weeks];
+    String[][] texts = new String[7][weeks];
     for (CommitsInDay commitsInDay : commitsInDays) {
       LocalDate date = commitsInDay.getLocalDate();
       DayOfWeek dayOfWeek = date.getDayOfWeek();
+      int dayOfWeekIndex = daysOfWeekMapToIndex.get(dayOfWeek);
       int numCommits = commitsInDay.getCommits().size();
 
-      int index = (int) Duration.between(startDate.atStartOfDay(), date.atStartOfDay()).toDays();
-      z[dayOfWeek.getValue() % 7][index] = numCommits;
-      if (!x.contains(date)) {
-        x.add(date);
-      }
+      int weekIndex = (int) Math.ceil(Duration.between(startDate.atStartOfDay(), date.atStartOfDay().plusDays(1)).toDays() / 7d) - 1;
+      z[dayOfWeekIndex][weekIndex] = numCommits;
+      texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter) + ": " + numCommits + " commits.";
     }
 
     plotlyData.setX(x);
     plotlyData.setY(y);
     plotlyData.setZ(z);
-
+    plotlyData.setTexts(texts);
     return plotlyData;
   }
 
