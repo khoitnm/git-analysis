@@ -262,7 +262,7 @@
     @endfor
     texts.push(itext);
     @endfor
-    
+
     var data_${memberKey} = [
       // {
       //   z: [[10, 20, 30, 40, 50], [20, 30, 40, 50, 60], [30, 40, 50, 60, 70], [40, 50, 60, 70, 80]],
@@ -276,7 +276,17 @@
         y: y,
         type: 'heatmap',
         text: texts,
-        hoverinfo: 'text'
+        hoverinfo: 'text',
+        colorscale: [
+          [0, 'rgb(0,87,87)'],
+          [0.2, 'rgb(0,155,155)'],
+          [0.4, 'rgb(0,194,194)'],
+          [0.6, 'rgb(0,231,231)'],
+          [0.8, 'rgb(123,255,255)'],
+          [1, 'rgb(179,255,255)']
+        ],
+        zmin: 0,
+        zmax: 30
       }
     ];
 
