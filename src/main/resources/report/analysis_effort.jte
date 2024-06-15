@@ -1,10 +1,16 @@
 @import gg.jte.support.ForSupport
+@import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter
 @import org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
+@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.GitCommitPerDayChartHelper
+@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.CommitsInDay
+@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.PlotlyData
 @import org.tnmk.tech_common.utils.FilePathUtils
 @import java.time.LocalDateTime
+@import java.util.Arrays
 @import java.util.List
+@import java.util.stream.Collectors
 @import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.commitDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.reportDateTimeFormatter
 @import static org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter.decimalFormat
@@ -18,6 +24,9 @@
 
 <html lang="english">
 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css">
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 <body>
 <style>
   body {
@@ -228,5 +237,50 @@
   </details>
 @endfor
 
+
+@for(AliasMemberInManyRepos member : members)
+  !{var memberKey = member.getMemberKey();}
+  <div id="heatmap_${memberKey}"></div>
+  !{ PlotlyData plotlyData = GitCommitPerDayChartHelper.getMemberCommitsEachDayChartData(fromDateTime, toDateTime, member);}
+
+  <script>
+    var x = [];
+    @for(int i = 0; i < plotlyData.getX().size(); i++)
+    x.push('${plotlyData.getX().get(i).format(GitFoldersHtmlReporter.chartDateTimeFormatter)}');
+    @endfor
+    var y = [];
+    @for(int i = 0; i < plotlyData.getY().size(); i++)
+    y.push('${plotlyData.getY().get(i)}');
+    @endfor
+    var data_${memberKey} = [
+      // {
+      //   z: [[10, 20, 30, 40, 50], [20, 30, 40, 50, 60], [30, 40, 50, 60, 70], [40, 50, 60, 70, 80]],
+      //   x: ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04', '2023-01-05'],
+      //   y: ['Mon', 'Tues', 'Weds', 'Thurs'],
+      //   type: 'heatmap'
+      // }
+      {
+        z: ${plotlyData.getZAsString()},
+        x: x,
+        y: y,
+        type: 'heatmap'
+      }
+    ];
+
+    var layout_${memberKey} = {
+      title: 'Commits of ${member.getAliases().toString()}',
+      xaxis: {
+        title: 'Date'
+        // tickformat: '%Y-%m-%d'
+      },
+      yaxis: {
+        title: 'Days of Week'
+        // tickformat: '%a'
+      }
+    };
+
+    Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});
+  </script>
+@endfor
 </body>
 </html>
