@@ -323,7 +323,7 @@
     var layout_${memberKey} = {
       // width: 1920,
       height: 380,
-      title: 'Commits of ${member.getAliases().toString()}',
+      title: 'Changed words of ${member.getAliases().toString()}',
       xaxis: {
         title: 'Date'
         // tickformat: '%Y-%m-%d'
