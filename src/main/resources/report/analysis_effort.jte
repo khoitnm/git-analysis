@@ -278,7 +278,7 @@
         text: texts,
         hoverinfo: 'text',
         colorscale: [
-          [0, 'rgb(0,87,87)'],
+          [0, 'rgb(35,35,35)'],
           [0.2, 'rgb(0,155,155)'],
           [0.4, 'rgb(0,194,194)'],
           [0.6, 'rgb(0,231,231)'],
@@ -289,17 +289,49 @@
         zmax: 30
       }
     ];
+    var annotations = [];
+    var dataObj = data_${memberKey}[0];
+    for (var i = 0; i < dataObj.y.length; i++) {
+      for (var j = 0; j < dataObj.x.length; j++) {
+        var currentValue = dataObj.z[i][j];
+        var textColor = 'white'; // Optional: Set text color based on cell value
 
+        var annotation = {
+          xref: 'x1',
+          yref: 'y1',
+          x: dataObj.x[j],
+          y: dataObj.y[i],
+          text: '',//currentValue.toFixed(2),
+          font: {
+            family: 'Arial',
+            size: 12,
+            color: textColor
+          },
+          showarrow: false,
+          align: 'center',
+          xanchor: 'center',
+          yanchor: 'middle',
+          bordercolor: 'rgb(0,0,0)', // Border color
+          borderwidth: 2, // Border width
+          width: 20,
+          height: 20
+        };
+        annotations.push(annotation);
+      }
+    }
     var layout_${memberKey} = {
+      // height: 102,
       title: 'Commits of ${member.getAliases().toString()}',
       xaxis: {
         title: 'Date'
         // tickformat: '%Y-%m-%d'
       },
       yaxis: {
-        title: 'Days of Week'
+        title: 'Days of Week',
         // tickformat: '%a'
-      }
+        tickvals: [1, 3, 5]
+      },
+      annotations: annotations
     };
 
     Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});

@@ -15,6 +15,10 @@ I think everybody already aware of these things, but I still want to emphasize t
    have 150 characters per line.
    So, with the same amount of code, the Back-End will have fewer lines.
 
+3. But there's one interesting note about the simplicity of the code: Sometimes, to make the code simpler, a developer must refine it a few times, 
+   and hence the total changed code across many commits may actually be higher while the total changed code in the final pull request may lower comparing to an unrefined code.
+   That's why I think if we look at the total changed words across many commits (not pull requests), it might give us a fairer view of for developers who want to improve the code quality.
+
 # Note about the application logic
 
 - The application will analyze based on the branch that is currently checked out. And then, it'll analyze the commits that
