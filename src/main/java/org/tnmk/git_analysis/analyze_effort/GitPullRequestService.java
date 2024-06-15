@@ -32,12 +32,7 @@ public class GitPullRequestService {
    */
   public Optional<List<RevCommit>> getPullRequestsOnDev(LocalDateTime startTimeToAnalyze, Repository repository) throws IOException {
 
-    ObjectId objectId = GitBranchHelper.resolveOneOfBranches(repository,
-      "refs/remotes/origin/dev",
-      "refs/remotes/origin/development",
-      "refs/remotes/origin/develop",
-      "refs/remotes/origin/qa"
-    ).orElse(null);
+    ObjectId objectId = GitBranchHelper.resolveOneOfBranches(repository, "refs/remotes/origin/dev", "refs/remotes/origin/development", "refs/remotes/origin/develop", "refs/remotes/origin/qa").orElse(null);
     if (objectId == null) {
       return Optional.empty();
     }
@@ -66,7 +61,15 @@ public class GitPullRequestService {
           commit = suitableParentCommit.orElse(null);
         }
         // Make sure all data of commit is populated.
-        commit = revWalk.parseCommit(commit);
+        if (commit != null) {
+          RevCommit parsedCommit;
+          try {
+            parsedCommit = revWalk.parseCommit(commit);
+          } catch (RuntimeException ex) {
+            throw new IllegalStateException("Cannot parse commit: " + commit.getName() + ", repo: " + repository.getDirectory(), ex);
+          }
+          commit = parsedCommit;
+        }
       } while (commit != null);
     }
     return Optional.of(mergeCommits);
