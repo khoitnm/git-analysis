@@ -279,10 +279,10 @@
         hoverinfo: 'text',
         colorscale: [
           [0, 'rgb(35,35,35)'],
-          [0.2, 'rgb(0,155,155)'],
-          [0.4, 'rgb(0,194,194)'],
-          [0.6, 'rgb(0,231,231)'],
-          [0.8, 'rgb(123,255,255)'],
+          [0.01, 'rgb(0,79,79)'],
+          [0.4, 'rgb(0,101,101)'],
+          [0.6, 'rgb(0,166,166)'],
+          [0.8, 'rgb(0,232,232)'],
           [1, 'rgb(179,255,255)']
         ],
         zmin: 0,
@@ -320,7 +320,8 @@
       }
     }
     var layout_${memberKey} = {
-      // height: 102,
+      // width: 1920,
+      height: 380,
       title: 'Commits of ${member.getAliases().toString()}',
       xaxis: {
         title: 'Date'
@@ -331,7 +332,9 @@
         // tickformat: '%a'
         tickvals: [1, 3, 5]
       },
-      annotations: annotations
+      xgap: 5,
+      ygap: 5,
+      // annotations: annotations
     };
 
     Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});
