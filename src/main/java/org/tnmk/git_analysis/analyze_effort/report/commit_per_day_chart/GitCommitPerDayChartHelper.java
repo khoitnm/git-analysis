@@ -26,12 +26,13 @@ public class GitCommitPerDayChartHelper {
     PlotlyData plotlyData = new PlotlyData();
 
     DayOfWeek startDayOfWeek = startDate.getDayOfWeek();
-    List<String> y = new ArrayList<>(7);
+    String[] y = new String[7];
     Map<DayOfWeek, Integer> daysOfWeekMapToIndex = new HashMap<>();
     for (int i = 0; i < 7; i++) {
       DayOfWeek dayOfWeek = startDayOfWeek.plus(i);
-      y.add(dayOfWeek.toString());
-      daysOfWeekMapToIndex.put(dayOfWeek, i);
+      int dayIndex = y.length - i - 1;
+      y[dayIndex] = dayOfWeek.toString();
+      daysOfWeekMapToIndex.put(dayOfWeek, dayIndex);
     }
 
     List<LocalDate> x = new ArrayList<>();
@@ -55,7 +56,7 @@ public class GitCommitPerDayChartHelper {
     }
 
     plotlyData.setX(x);
-    plotlyData.setY(y);
+    plotlyData.setY(List.of(y));
     plotlyData.setZ(z);
     plotlyData.setTexts(texts);
     return plotlyData;
