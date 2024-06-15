@@ -1,4 +1,4 @@
-package org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model;
+package org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model;
 
 import lombok.Getter;
 import lombok.Setter;

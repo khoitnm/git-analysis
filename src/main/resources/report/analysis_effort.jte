@@ -3,9 +3,10 @@
 @import org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo
-@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.GitCommitPerDayChartHelper
-@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.CommitsInDay
-@import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.PlotlyData
+@import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.GitContributionsPerDayChartHelper
+@import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.GitContributionsPerDayChartHelper
+@import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.ContributionsInDay
+@import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.PlotlyData
 @import org.tnmk.tech_common.utils.FilePathUtils
 @import java.time.LocalDateTime
 @import java.util.Arrays
@@ -241,7 +242,7 @@
 @for(AliasMemberInManyRepos member : members)
   !{var memberKey = member.getMemberKey();}
   <div id="heatmap_${memberKey}"></div>
-  !{ PlotlyData plotlyData = GitCommitPerDayChartHelper.getMemberCommitsEachDayChartData(fromDateTime, toDateTime, member);}
+  !{ PlotlyData plotlyData = GitContributionsPerDayChartHelper.getMemberContributionsEachDayChartData(fromDateTime, toDateTime, member);}
 
   <script>
     var x = [];
@@ -279,14 +280,14 @@
         hoverinfo: 'text',
         colorscale: [
           [0, 'rgb(35,35,35)'],
-          [0.01, 'rgb(0,79,79)'],
-          [0.4, 'rgb(0,166,166)'],
-          [0.6, 'rgb(0,255,255)'],
-          [0.8, 'rgb(147,255,255)'],
-          [1, 'rgb(179,255,255)']
+          [0.001, 'rgb(0,87,87)'],
+          [0.3, 'rgb(1,155,155)'],
+          [0.4, 'rgb(0,199,199)'],
+          [0.5, 'rgb(0,255,255)'],
+          [1, 'rgb(234,255,255)']
         ],
         zmin: 0,
-        zmax: 30
+        zmax: 10000
       }
     ];
     var annotations = [];

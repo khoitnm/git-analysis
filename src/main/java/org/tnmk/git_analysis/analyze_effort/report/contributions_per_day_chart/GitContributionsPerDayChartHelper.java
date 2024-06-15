@@ -1,10 +1,10 @@
-package org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart;
+package org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart;
 
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter;
-import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.CommitsInDay;
-import org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model.PlotlyData;
+import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.ContributionsInDay;
+import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.PlotlyData;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GitCommitPerDayChartHelper {
+public class GitContributionsPerDayChartHelper {
 
-  public static PlotlyData getMemberCommitsEachDayChartData(LocalDateTime startDateTime, LocalDateTime endDateTime, AliasMemberInManyRepos member) {
-    List<CommitsInDay> commitsInDays = getCommitsEachDay(startDateTime, endDateTime, member.commits());
-    return convertCommitsInDaysToPlotlyData(startDateTime.toLocalDate(), endDateTime.toLocalDate(), commitsInDays);
+  public static PlotlyData getMemberContributionsEachDayChartData(LocalDateTime startDateTime, LocalDateTime endDateTime, AliasMemberInManyRepos member) {
+    List<ContributionsInDay> contributionsInDays = getCommitsEachDay(startDateTime, endDateTime, member.commits());
+    return convertContributionsInDaysToPlotlyData(startDateTime.toLocalDate(), endDateTime.toLocalDate(), contributionsInDays);
   }
 
-  public static PlotlyData convertCommitsInDaysToPlotlyData(LocalDate startDate, LocalDate endDate, List<CommitsInDay> commitsInDays) {
+  public static PlotlyData convertContributionsInDaysToPlotlyData(LocalDate startDate, LocalDate endDate, List<ContributionsInDay> contributionsInDays) {
     PlotlyData plotlyData = new PlotlyData();
 
     DayOfWeek startDayOfWeek = startDate.getDayOfWeek();
@@ -44,15 +44,15 @@ public class GitCommitPerDayChartHelper {
 
     int[][] z = new int[7][weeks];
     String[][] texts = new String[7][weeks];
-    for (CommitsInDay commitsInDay : commitsInDays) {
-      LocalDate date = commitsInDay.getLocalDate();
+    for (ContributionsInDay contributionsInDay : contributionsInDays) {
+      LocalDate date = contributionsInDay.getLocalDate();
       DayOfWeek dayOfWeek = date.getDayOfWeek();
       int dayOfWeekIndex = daysOfWeekMapToIndex.get(dayOfWeek);
-      int numCommits = commitsInDay.getCommits().size();
+      int contributionsCount = contributionsInDay.getTotalWords();
 
       int weekIndex = (int) Math.ceil(Duration.between(startDate.atStartOfDay(), date.atStartOfDay().plusDays(1)).toDays() / 7d) - 1;
-      z[dayOfWeekIndex][weekIndex] = numCommits;
-      texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter) + ": " + numCommits + " commits.";
+      z[dayOfWeekIndex][weekIndex] = contributionsCount;
+      texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter) + ": " + contributionsCount + " words.";
     }
 
     plotlyData.setX(x);
@@ -62,21 +62,21 @@ public class GitCommitPerDayChartHelper {
     return plotlyData;
   }
 
-  public static List<CommitsInDay> getCommitsEachDay(LocalDateTime startDateTime, LocalDateTime endDateTime, List<CommitResult> commits) {
+  public static List<ContributionsInDay> getCommitsEachDay(LocalDateTime startDateTime, LocalDateTime endDateTime, List<CommitResult> commits) {
     long days = Duration.between(startDateTime, endDateTime.plusDays(1)).toDays();
     if (days > Integer.MAX_VALUE) throw new IllegalArgumentException("Days in the report shouldn't be bigger than maximum int: " + days);
 
-    List<CommitsInDay> commitsInDays = new ArrayList<>((int) days);
+    List<ContributionsInDay> contributionsInDays = new ArrayList<>((int) days);
     LocalDate startDate = startDateTime.toLocalDate();
     for (int i = 0; i < days; i++) {
       LocalDate currentDate = startDate.plusDays(i);
       List<CommitResult> commitsInDay = findCommitsInDay(commits, currentDate);
-      commitsInDays.add(CommitsInDay.builder()
+      contributionsInDays.add(ContributionsInDay.builder()
         .localDate(currentDate)
         .commits(commitsInDay)
         .build());
     }
-    return commitsInDays;
+    return contributionsInDays;
   }
 
   private static List<CommitResult> findCommitsInDay(List<CommitResult> commits, LocalDate currentDate) {

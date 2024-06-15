@@ -1,4 +1,4 @@
-package org.tnmk.git_analysis.analyze_effort.report.commit_per_day_chart.model;
+package org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +9,11 @@ import java.util.List;
 
 @Builder
 @Getter
-public class CommitsInDay {
+public class ContributionsInDay {
   private final LocalDate localDate;
   private final List<CommitResult> commits;
+
+  public int getTotalWords() {
+    return commits.stream().mapToInt(commit -> commit.getWordsCount()).sum();
+  }
 }
