@@ -23,7 +23,7 @@ import java.util.Map;
 public class GitFoldersHtmlReporter {
   public static final DateTimeFormatter commitDateTimeFormatter = DateTimeFormatter.ofPattern("yy/MM/dd hh:mm a");
   public static final DateTimeFormatter reportDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MMM/dd hh:mm a");
-  public static final DateTimeFormatter reportDateTimeInFileNameFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_a_hh-mm");
+  public static final DateTimeFormatter reportDateTimeInFileNameFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   public static final DateTimeFormatter chartDateTimeFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
   public static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
@@ -36,7 +36,7 @@ public class GitFoldersHtmlReporter {
 
   public void report(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, Collection<AliasMemberInManyRepos> members) throws IOException {
     List<AliasMemberInManyRepos> sortedMembers = GitFoldersReportHelper.sortMembersByTotalWords(members);
-    String outputFilePath = "target/report/analyze_git_" + reportDateTimeInFileNameFormatter.format(startTimeToAnalyze) + ".html";
+    String outputFilePath = "target/report/analyze_git_" + reportDateTimeInFileNameFormatter.format(startTimeToAnalyze) + "_" + reportDateTimeInFileNameFormatter.format(endTimeToAnalyze) + ".html";
     jteReport("analysis_effort.jte", outputFilePath,
       Map.of(
         "fromDateTime", startTimeToAnalyze,
