@@ -9,6 +9,7 @@
 @import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.PlotlyData
 @import org.tnmk.tech_common.utils.FilePathUtils
 @import java.time.LocalDateTime
+@import java.time.temporal.ChronoUnit
 @import java.util.Arrays
 @import java.util.List
 @import java.util.stream.Collectors
@@ -118,7 +119,8 @@
   }
 </style>
 <span class="title">Repositories Analysis</span>
-<span class="sub-title">from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)}</span>
+<span
+  class="sub-title">from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS)} weeks)</span>
 
 @for (AliasMemberInManyRepos member : members)
   !{var memberPullRequests = member.pullRequests();}
@@ -321,17 +323,17 @@
       }
     }
     var layout_${memberKey} = {
-      // width: 1920,
+      width: ${100 + 80 + (fromDateTime.until(toDateTime, ChronoUnit.WEEKS) + 1) * 27},
       height: 380,
       title: 'Changed words of ${member.getAliases().toString()}',
       xaxis: {
-        title: 'Date'
+        // title: 'Date'
         // tickformat: '%Y-%m-%d'
       },
       yaxis: {
-        title: 'Days of Week',
+        title: '',
         // tickformat: '%a'
-        tickvals: [1, 3, 5]
+        // tickvals: [1, 3, 5]
       },
       xgap: 5,
       ygap: 5,
