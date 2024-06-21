@@ -5,6 +5,7 @@ import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter;
 import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.ContributionsInDay;
 import org.tnmk.git_analysis.analyze_effort.report.contributions_per_day_chart.model.PlotlyData;
+import org.tnmk.tech_common.utils.FilePathUtils;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GitContributionsPerDayChartHelper {
 
@@ -73,8 +75,8 @@ public class GitContributionsPerDayChartHelper {
       // To have the break-line in the tooltip of Ploty chart, we need to use "<br>" instead of "<br/>".
       // https://community.plotly.com/t/ploty-legned-break-line-fixed-width/79868/2
       texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter)
-        + "<br>" + contributionsCount + " words."
-        + "<br>" + contributionsInDay.getCommits().size() + " commits."
+        + "<br>Total: " + contributionsCount + " words, " + contributionsInDay.getCommits().size() + " commits."
+        + "<br>" + reportContributionInReposInDay(contributionsInDay)
       ;
     }
 
@@ -91,6 +93,21 @@ public class GitContributionsPerDayChartHelper {
       LocalDate commitDate = commitDateTime.toLocalDate();
       return commitDate.equals(currentDate);
     }).toList();
+  }
+
+  private static String reportContributionInReposInDay(ContributionsInDay contributionsInDay) {
+    Map<String, List<CommitResult>> commitsInRepos = contributionsInDay.getCommits().stream()
+      .collect(Collectors.groupingBy(CommitResult::getRepoPath));
+    List<String> reportInRepos = new ArrayList<>(commitsInRepos.size());
+    for (String repoPath : commitsInRepos.keySet()) {
+      List<CommitResult> commitsInRepo = commitsInRepos.get(repoPath);
+      int totalWords = commitsInRepo.stream().mapToInt(CommitResult::getWordsCount).sum();
+      int totalCommits = commitsInRepo.size();
+      String repoName = FilePathUtils.getLastPathPart(repoPath);
+      String reportPerRepo = repoName + ": " + totalWords + " words, " + totalCommits + " commits.";
+      reportInRepos.add(reportPerRepo);
+    }
+    return String.join("<br>", reportInRepos);
   }
 
 
