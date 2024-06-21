@@ -22,7 +22,24 @@ public class GitContributionsPerDayChartHelper {
     return convertContributionsInDaysToPlotlyData(startDateTime.toLocalDate(), endDateTime.toLocalDate(), contributionsInDays);
   }
 
-  public static PlotlyData convertContributionsInDaysToPlotlyData(LocalDate startDate, LocalDate endDate, List<ContributionsInDay> contributionsInDays) {
+  private static List<ContributionsInDay> getCommitsEachDay(LocalDateTime startDateTime, LocalDateTime endDateTime, List<CommitResult> commits) {
+    long days = Duration.between(startDateTime, endDateTime.plusDays(1)).toDays();
+    if (days > Integer.MAX_VALUE) throw new IllegalArgumentException("Days in the report shouldn't be bigger than maximum int: " + days);
+
+    List<ContributionsInDay> contributionsInDays = new ArrayList<>((int) days);
+    LocalDate startDate = startDateTime.toLocalDate();
+    for (int i = 0; i < days; i++) {
+      LocalDate currentDate = startDate.plusDays(i);
+      List<CommitResult> commitsInDay = findCommitsInDay(commits, currentDate);
+      contributionsInDays.add(ContributionsInDay.builder()
+        .localDate(currentDate)
+        .commits(commitsInDay)
+        .build());
+    }
+    return contributionsInDays;
+  }
+
+  private static PlotlyData convertContributionsInDaysToPlotlyData(LocalDate startDate, LocalDate endDate, List<ContributionsInDay> contributionsInDays) {
     PlotlyData plotlyData = new PlotlyData();
 
     DayOfWeek startDayOfWeek = startDate.getDayOfWeek();
@@ -52,7 +69,11 @@ public class GitContributionsPerDayChartHelper {
 
       int weekIndex = (int) Math.ceil(Duration.between(startDate.atStartOfDay(), date.atStartOfDay().plusDays(1)).toDays() / 7d) - 1;
       z[dayOfWeekIndex][weekIndex] = contributionsCount;
-      texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter) + ": " + contributionsCount + " words.";
+
+      // To have the break-line in the tooltip of Ploty chart, we need to use "<br>" instead of "<br/>".
+      // https://community.plotly.com/t/ploty-legned-break-line-fixed-width/79868/2
+      texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter)
+        + "<br>" + contributionsCount + " words.";
     }
 
     plotlyData.setX(x);
@@ -60,23 +81,6 @@ public class GitContributionsPerDayChartHelper {
     plotlyData.setZ(z);
     plotlyData.setTexts(texts);
     return plotlyData;
-  }
-
-  public static List<ContributionsInDay> getCommitsEachDay(LocalDateTime startDateTime, LocalDateTime endDateTime, List<CommitResult> commits) {
-    long days = Duration.between(startDateTime, endDateTime.plusDays(1)).toDays();
-    if (days > Integer.MAX_VALUE) throw new IllegalArgumentException("Days in the report shouldn't be bigger than maximum int: " + days);
-
-    List<ContributionsInDay> contributionsInDays = new ArrayList<>((int) days);
-    LocalDate startDate = startDateTime.toLocalDate();
-    for (int i = 0; i < days; i++) {
-      LocalDate currentDate = startDate.plusDays(i);
-      List<CommitResult> commitsInDay = findCommitsInDay(commits, currentDate);
-      contributionsInDays.add(ContributionsInDay.builder()
-        .localDate(currentDate)
-        .commits(commitsInDay)
-        .build());
-    }
-    return contributionsInDays;
   }
 
   private static List<CommitResult> findCommitsInDay(List<CommitResult> commits, LocalDate currentDate) {
