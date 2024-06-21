@@ -75,7 +75,6 @@ public class GitContributionsPerDayChartHelper {
       // To have the break-line in the tooltip of Ploty chart, we need to use "<br>" instead of "<br/>".
       // https://community.plotly.com/t/ploty-legned-break-line-fixed-width/79868/2
       texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter)
-        + "<br>Total: " + contributionsCount + " words, " + contributionsInDay.getCommits().size() + " commits."
         + "<br>" + reportContributionInReposInDay(contributionsInDay)
       ;
     }
@@ -107,7 +106,13 @@ public class GitContributionsPerDayChartHelper {
       String reportPerRepo = repoName + ": " + totalWords + " words, " + totalCommits + " commits.";
       reportInRepos.add(reportPerRepo);
     }
-    return String.join("<br>", reportInRepos);
+    StringBuilder report = new StringBuilder();
+    if (commitsInRepos.size() > 1) {
+      report.append("<br>Total: ").append(contributionsInDay.getTotalWords()).append(" words, ").append(contributionsInDay.getCommits().size()).append(" commits.");
+    }
+    String reportInReposStr = String.join("<br>", reportInRepos);
+    report.append(reportInReposStr);
+    return report.toString();
   }
 
 
