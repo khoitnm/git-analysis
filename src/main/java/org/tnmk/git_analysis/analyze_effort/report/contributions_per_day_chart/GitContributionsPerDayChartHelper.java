@@ -108,7 +108,7 @@ public class GitContributionsPerDayChartHelper {
     }
     StringBuilder report = new StringBuilder();
     if (commitsInRepos.size() > 1) {
-      report.append("<br>Total: ").append(contributionsInDay.getTotalWords()).append(" words, ").append(contributionsInDay.getCommits().size()).append(" commits.");
+      report.append("Total: ").append(contributionsInDay.getTotalWords()).append(" words, ").append(contributionsInDay.getCommits().size()).append(" commits.<br>");
     }
     String reportInReposStr = String.join("<br>", reportInRepos);
     report.append(reportInReposStr);
