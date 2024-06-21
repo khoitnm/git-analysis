@@ -73,7 +73,9 @@ public class GitContributionsPerDayChartHelper {
       // To have the break-line in the tooltip of Ploty chart, we need to use "<br>" instead of "<br/>".
       // https://community.plotly.com/t/ploty-legned-break-line-fixed-width/79868/2
       texts[dayOfWeekIndex][weekIndex] = date.format(GitFoldersHtmlReporter.chartDateTimeFormatter)
-        + "<br>" + contributionsCount + " words.";
+        + "<br>" + contributionsCount + " words."
+        + "<br>" + contributionsInDay.getCommits().size() + " commits."
+      ;
     }
 
     plotlyData.setX(x);
