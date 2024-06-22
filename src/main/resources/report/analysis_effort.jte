@@ -44,19 +44,21 @@
     display: flex;
     justify-content: space-between;
     padding: 5px 5px 0px 0px;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.9);
   }
 
   .title {
     font-size: larger;
     padding: 0px 10px 0 10px;
     display: inline-block;
-    font-weight: bold;
+    /*font-weight: bold;*/
+    color: #DDD;
   }
 
   .sub-title {
     font-size: smaller;
-    color: rgba(0, 0, 0, 0.5);
+    /*color: rgba(0, 0, 0, 0.5);*/
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .nested-1 {
@@ -155,8 +157,8 @@
     cursor: pointer;
     padding: 5px 20px 10px 20px; /* Top has only 5px because active-header already has 5px border */
     border: none;
-    background: rgba(255, 255, 255, 0);
-    color: rgba(0, 0, 0, 0.5);
+    background: none;
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .active-tab-header {
