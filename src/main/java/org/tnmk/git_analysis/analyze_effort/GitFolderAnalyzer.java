@@ -12,6 +12,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommitType;
+import org.tnmk.git_analysis.analyze_effort.model.GitRepo;
 import org.tnmk.git_analysis.analyze_effort.model.Member;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 import org.tnmk.git_analysis.git_connection.GitSshHelper;
@@ -51,7 +52,7 @@ public class GitFolderAnalyzer {
       }
       log.info("Analyzing {}...", repoPath);
 
-      String sourceCodeUrl = gitRepoService.getGitSourceCodeUrl(repository);
+      GitRepo gitRepo = gitRepoService.createGitRepo(repository);
 
       // key: member name
       Map<String, Member> members = new HashMap<>();
@@ -73,7 +74,7 @@ public class GitFolderAnalyzer {
         }
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
 
-          Optional<CommitResult> foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);
+          Optional<CommitResult> foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, gitRepo, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);
           if (foundCommitResult.isEmpty()) {
             ignoredMembers.add(commit.getAuthorIdent().getName());
             continue;
@@ -84,7 +85,7 @@ public class GitFolderAnalyzer {
           // the person who spent the effort is the implementor, not the committer.
           String implementor = commitResult.getImplementor();
 
-          Member member = members.getOrDefault(implementor, new Member(implementor, repoPath));
+          Member member = members.getOrDefault(implementor, new Member(implementor, gitRepo));
           if (commitResult.getCommitType() == CommitType.PULL_REQUEST) {
             // We don't want to count the PR that's used to deploy (let's call them 'deploymentPR):
             // Those PRs has a lot of code from different branches that's contributed from many people.

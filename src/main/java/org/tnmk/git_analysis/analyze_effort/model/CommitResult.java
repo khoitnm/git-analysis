@@ -3,6 +3,8 @@ package org.tnmk.git_analysis.analyze_effort.model;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
+import org.tnmk.git_analysis.analyze_effort.GitCommitHelper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,19 +25,26 @@ public class CommitResult {
    * Determining the 'implementor' is not always straightforward, as the code in a pull request or a branch
    * could have been written by multiple contributors.
    */
+  @NonNull
   private final String implementor;
   /**
    * @see #implementor
    */
+  @NonNull
   private final String committer;
   /**
    * Aka. 'commitName' / 'commitId'
    */
+  @NonNull
   private final String commitRevision;
+  @NonNull
   private final LocalDateTime commitDateTime;
+  @NonNull
   private final CommitType commitType;
+  @NonNull
   private final List<CommittedFile> files;
-  private final String repoPath;
+  @NonNull
+  private final GitRepo gitRepo;
 
   @Nullable
   private final String mergedTargetBranch;
@@ -50,5 +59,9 @@ public class CommitResult {
 
   public int getWordsCount() {
     return files.stream().mapToInt(CommittedFile::getChangedWords).sum();
+  }
+
+  public String getCommitUrl() {
+    return GitCommitHelper.getCommitUrl(gitRepo, commitRevision);
   }
 }

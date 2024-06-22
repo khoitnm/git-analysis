@@ -39,20 +39,11 @@ public class GitRepoHelper {
     }
   }
 
-
-  public static String getProjectName(Repository repository) {
-    String remoteUrl = getGitCloneUrl(repository);
-    return getProjectName(remoteUrl);
-  }
-
   public static String getRepoName(String cloneUrl) {
     String[] urlParts = cloneUrl.split("/");
     // The repository name is usually the last part of the URL, we also remove the .git extension
     return urlParts[urlParts.length - 1].replace(".git", "");
   }
 
-  public static String getRepoName(Repository repository) {
-    String remoteUrl = getGitCloneUrl(repository);
-    return getRepoName(remoteUrl);
-  }
+
 }

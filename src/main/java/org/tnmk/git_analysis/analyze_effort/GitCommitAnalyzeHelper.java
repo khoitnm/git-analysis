@@ -6,10 +6,7 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.util.CollectionUtils;
-import org.tnmk.git_analysis.analyze_effort.model.CommitDiffs;
-import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
-import org.tnmk.git_analysis.analyze_effort.model.CommitType;
-import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
+import org.tnmk.git_analysis.analyze_effort.model.*;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 import org.tnmk.tech_common.utils.PathMatcherUtils;
 
@@ -32,7 +29,7 @@ public class GitCommitAnalyzeHelper {
    * We want this method, not the parent method to decide whether we should ignore the commit or not
    * is because we don't want this method spend too much effort to analyze the commit if it should be ignored.
    */
-  public static Optional<CommitResult> analyzeCommit(Repository repository, RevCommit commit, GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties, Set<String> onlyIncludeMembers) throws IOException, GitAPIException {
+  public static Optional<CommitResult> analyzeCommit(Repository repository, GitRepo gitRepo, RevCommit commit, GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties, Set<String> onlyIncludeMembers) throws IOException, GitAPIException {
     try (DiffFormatter diffFormatter = createDiffFormatter(repository)) {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
@@ -62,6 +59,7 @@ public class GitCommitAnalyzeHelper {
         int changedWords = GitDiffWordHelper.countWordsChangedInFile(repository, diffFormatter, diffEntry);
 
         CommittedFile file = CommittedFile.builder()
+          .gitRepo(gitRepo)
           .newPath(diffEntry.getNewPath())
           .changedLines(changedLines)
           .changedWords(changedWords)
@@ -76,8 +74,7 @@ public class GitCommitAnalyzeHelper {
         mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
       }
       return Optional.of(CommitResult.builder()
-        // repository.getDirectory() points to the .git folder, so we need to get the parent folder.
-        .repoPath(repository.getDirectory().getParent())
+        .gitRepo(gitRepo)
         .committer(commitDiffs.getCommitter())
         .implementor(commitDiffs.getImplementor())
         .commitRevision(commit.getName())

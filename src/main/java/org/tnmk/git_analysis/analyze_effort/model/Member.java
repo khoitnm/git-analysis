@@ -9,13 +9,13 @@ import java.util.List;
 @Getter
 public class Member {
   private final String name;
-  private final String repoPath;
+  private final GitRepo gitRepo;
   private final List<CommitResult> commits;
   private final List<CommitResult> pullRequests;
 
-  public Member(String name, String repoPath) {
+  public Member(String name, GitRepo gitRepo) {
     this.name = name;
-    this.repoPath = repoPath;
+    this.gitRepo = gitRepo;
     this.commits = Collections.synchronizedList(new ArrayList<>());
     this.pullRequests = Collections.synchronizedList(new ArrayList<>());
   }

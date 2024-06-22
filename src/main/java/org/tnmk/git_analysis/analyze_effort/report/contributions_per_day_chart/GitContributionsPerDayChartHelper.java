@@ -96,7 +96,7 @@ public class GitContributionsPerDayChartHelper {
 
   private static String reportContributionInReposInDay(ContributionsInDay contributionsInDay) {
     Map<String, List<CommitResult>> commitsInRepos = contributionsInDay.getCommits().stream()
-      .collect(Collectors.groupingBy(CommitResult::getRepoPath));
+      .collect(Collectors.groupingBy(commit -> commit.getGitRepo().getRepoName()));
     List<String> reportInRepos = new ArrayList<>(commitsInRepos.size());
     for (String repoPath : commitsInRepos.keySet()) {
       List<CommitResult> commitsInRepo = commitsInRepos.get(repoPath);

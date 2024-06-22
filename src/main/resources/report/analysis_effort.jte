@@ -204,11 +204,11 @@
       @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
         <div class="pure-g file-item nested-1">
           <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
-          <div class="pure-u-7-24">${FilePathUtils.getLastPathPart(commitEntry.get().getRepoPath())}</div>
+          <div class="pure-u-7-24">${FilePathUtils.getLastPathPart(commitEntry.get().getGitRepo().getRepoName())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
-          <div class="pure-u-6-24">${commitEntry.get().getCommitRevision()}</div>
+          <div class="pure-u-6-24"><a href="${commitEntry.get().getCommitUrl()}">${commitEntry.get().getCommitRevision()}</a></div>
           <div class="pure-u-3-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
           <div class="pure-u-4-24">${commitEntry.get().getCommitter()}</div>
         </div>
@@ -231,7 +231,7 @@
           <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
           <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
-          <div class="pure-u-5-24">${fileEntry.get().getCommitRevision()}</div>
+          <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}">${fileEntry.get().getCommitRevision()}</a></div>
           <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
           <div class="pure-u-14-24">${fileEntry.get().getNewPath()}</div>
         </div>
