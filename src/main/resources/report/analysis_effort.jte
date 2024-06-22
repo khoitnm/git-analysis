@@ -360,6 +360,18 @@
     };
 
     Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});
+
+    // Javascript on heatmap click event
+    var heatmap = document.getElementById('heatmap_${memberKey}');
+
+    heatmap.on('plotly_click', function (data) {
+      var x = data.points[0].x;
+      var y = data.points[0].y;
+      var z = data.points[0].z;
+
+      // Perform your action here
+      console.log('You clicked on cell with coordinates: x=' + x + ', y=' + y + ', z=' + z);
+    });
   </script>
 @endfor
 </body>
