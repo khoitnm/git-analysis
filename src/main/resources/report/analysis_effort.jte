@@ -233,7 +233,7 @@
           <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
           <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}">${fileEntry.get().getCommitRevision()}</a></div>
           <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-14-24">${fileEntry.get().getNewPath()}</div>
+          <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}">${fileEntry.get().getNewPath()}</a></div>
         </div>
       @endfor
     </div>

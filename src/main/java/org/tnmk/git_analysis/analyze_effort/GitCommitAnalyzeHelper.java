@@ -60,6 +60,7 @@ public class GitCommitAnalyzeHelper {
 
         CommittedFile file = CommittedFile.builder()
           .gitRepo(gitRepo)
+          .newFileId(diffEntry.getNewId().toObjectId().getName())
           .newPath(diffEntry.getNewPath())
           .changedLines(changedLines)
           .changedWords(changedWords)
