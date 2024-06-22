@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css">
 <head>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <title>Repos Analysis: ${fromDateTime.format(reportDateTimeFormatter)} - ${toDateTime.format(reportDateTimeFormatter)}</title>
 </head>
 <body>
 <style>
@@ -39,15 +40,23 @@
     cursor: pointer;
   }
 
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 5px 0px 0px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
   .title {
     font-size: larger;
-    padding: 20px 20px 0 20px;
+    padding: 0px 10px 0 10px;
     display: inline-block;
+    font-weight: bold;
   }
 
   .sub-title {
     font-size: smaller;
-    padding: 20px;
+    color: rgba(0, 0, 0, 0.5);
   }
 
   .nested-1 {
@@ -142,26 +151,33 @@
   }
 
   .tab-header {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
+    padding: 5px 20px 10px 20px; /* Top has only 5px because active-header already has 5px border */
+    border: none;
+    background: rgba(255, 255, 255, 0);
+    color: rgba(0, 0, 0, 0.5);
   }
 
   .active-tab-header {
-    background: #009496;
-    color: #EFEFEF;
+    color: rgba(0, 0, 0, 1);
     cursor: default;
+    border-top: 5px solid #009496;
+    background: #f6f6f6;
   }
 </style>
-<span class="title">Repositories Analysis</span>
-<span class="sub-title">
-  from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS)} weeks)
-</span>
-<button id="btnCommitMetrics" onClick="showCommitsMetrics()" class="tab-header">Commit Metrics</button>
-<button id="btnContributionGraph" onClick="showContributionGraph()" class="tab-header">Daily Contribution Graph</button>
-
-<div id="commits-metrics">
+<header>
+  <div style="line-height: 30px;"> <!-- make content vertical center -->
+    <span class="title">Repositories Analysis</span>
+    <span class="sub-title">
+    ${fromDateTime.format(reportDateTimeFormatter)} - ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS) + 1} weeks)
+    </span>
+  </div>
+  <nav>
+    <button id="btnCommitMetrics" onClick="showCommitsMetrics()" class="tab-header">Commit Metrics</button>
+    <button id="btnContributionGraph" onClick="showContributionGraph()" class="tab-header">Daily Contribution Graph</button>
+  </nav>
+</header>
+<section id="commits-metrics">
   @for (var memberEntry : ForSupport.of(members))
     !{
         var member = memberEntry.get();
@@ -289,10 +305,10 @@
       </div>
     </details>
   @endfor
-</div>
+</section>
 
 
-<div id="contribution-graph">
+<section id="contribution-graph">
   @for(AliasMemberInManyRepos member : members)
     !{var memberKey = member.getMemberKey();}
     <div id="heatmap_${memberKey}"></div>
@@ -407,7 +423,7 @@
       });
     </script>
   @endfor
-</div>
+</section>
 <script>
   function showCommitsMetrics() {
     document.getElementById('commits-metrics').className = 'active-tab';
