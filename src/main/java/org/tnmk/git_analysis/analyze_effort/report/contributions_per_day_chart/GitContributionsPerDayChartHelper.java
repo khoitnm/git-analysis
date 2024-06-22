@@ -11,10 +11,8 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GitContributionsPerDayChartHelper {
@@ -50,7 +48,7 @@ public class GitContributionsPerDayChartHelper {
     for (int i = 0; i < 7; i++) {
       DayOfWeek dayOfWeek = startDayOfWeek.plus(i);
       int dayIndex = y.length - i - 1;
-      y[dayIndex] = dayOfWeek.toString();
+      y[dayIndex] = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault());
       daysOfWeekMapToIndex.put(dayOfWeek, dayIndex);
     }
 

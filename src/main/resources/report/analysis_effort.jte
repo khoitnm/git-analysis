@@ -314,7 +314,7 @@
 <section id="contribution-graph">
   @for(AliasMemberInManyRepos member : members)
     !{var memberKey = member.getMemberKey();}
-    <div id="heatmap_${memberKey}"></div>
+    <div id="heatmap_${memberKey}" style="padding: 20px 0 0 20px;"></div>
     !{ PlotlyData plotlyData = GitContributionsPerDayChartHelper.getMemberContributionsEachDayChartData(fromDateTime, toDateTime, member);}
 
     <script>
