@@ -119,7 +119,7 @@
   }
 
   .commit-link:link {
-    color: #008383;
+    color: #005d5d;
   }
 
   .commit-link:hover {
@@ -127,7 +127,7 @@
   }
 
   .commit-link:visited {
-    color: #4c6262;
+    color: #445454;
   }
 </style>
 <span class="title">Repositories Analysis</span>
