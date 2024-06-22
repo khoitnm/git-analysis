@@ -28,4 +28,15 @@ public class GitRepoHelperTest {
     String actualProjectName = GitRepoHelper.getProjectName(cloneUrl);
     assertEquals(expectedProjectName, actualProjectName);
   }
+
+  @ParameterizedTest
+  @CsvSource({
+    "https://git.customdomain.com/projects/SOP/repos/my-sample-repository.git, my-sample-repository",
+    "ssh://git@git.customdomain.com:7999/sop/my-sample-repository.git, my-sample-repository",
+    "https://github.com/khoitnm/git-analysis.git, git-analysis",
+  })
+  public void testGetRepoName(String cloneUrl, String expectedRepoName) {
+    String actualRepoName = GitRepoHelper.getRepoName(cloneUrl);
+    assertEquals(expectedRepoName, actualRepoName);
+  }
 }
