@@ -127,15 +127,15 @@
   <div class="pure-g title-lv1">
     <div class="pure-u-6-24">${member.getAliases().toString()}</div>
     <div class="pure-u-1-24"
-         title="Words in commit (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
+         title="Words in commits (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
       Words
     </div>
     <div class="pure-u-1-24"
-         title="Lines in commit (which could be different from changed lines in PR); and it doesn't count the changes in the merge commit.">
+         title="Lines in commits (which could be different from changed lines in PR); and it doesn't count the changes in the merge commit.">
       Lines
     </div>
     <div class="pure-u-1-24"
-         title="Files in commit (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
+         title="Files in commits (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
       Files
     </div>
     <div class="pure-u-1-24">PRs</div>
@@ -187,7 +187,7 @@
   @endif
   <details class="">
     <summary class="repo-report-item repo-report-item-main"
-             title="Pull Requests: Just note that it's currently include PRs from 'dev' to 'master' branch. They would be excluded in the future.">
+             title="Pull Requests: Despite efforts to exclude PRs from 'dev' to 'master', the lack of permission for BitBucket server integration resulted in some PRs not being successfully excluded, although most were.">
       Pull Requests
     </summary>
     <div class="pure-g file-item nested-1">
