@@ -150,14 +150,16 @@
          title="Files in commits (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
       Files
     </div>
-    <div class="pure-u-1-24">PRs</div>
-    <div class="pure-u-2-24">Words/PR</div>
-    <div class="pure-u-2-24">Lines/PR</div>
-    <div class="pure-u-2-24">Files/PR</div>
+
     <div class="pure-u-2-24">Commits</div>
     <div class="pure-u-2-24">Words/Commit</div>
     <div class="pure-u-2-24">Lines/Commit</div>
     <div class="pure-u-2-24">Files/Commit</div>
+
+    <div class="pure-u-1-24">PRs</div>
+    <div class="pure-u-2-24">Words/PR</div>
+    <div class="pure-u-2-24">Lines/PR</div>
+    <div class="pure-u-2-24">Files/PR</div>
   </div>
   <div class="pure-g repo-report-item repo-report-item-main">
     <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
@@ -169,14 +171,16 @@
     <div class="pure-u-1-24">${decimalFormat.format(member.totalWords())}</div>
     <div class="pure-u-1-24">${decimalFormat.format(member.totalLines())}</div>
     <div class="pure-u-1-24">${decimalFormat.format(member.totalFiles())}</div>
-    <div class="pure-u-1-24">${memberPullRequests.size()}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(memberPullRequests))}</div>
+
     <div class="pure-u-2-24">${decimalFormat.format(member.commitsSize())}</div>
     <div class="pure-u-2-24">${"%.1f".formatted(member.avgWordsPerCommit())}</div>
     <div class="pure-u-2-24">${"%.1f".formatted(member.avgLinesPerCommit())}</div>
     <div class="pure-u-2-24">${"%.1f".formatted(member.avgFilesPerCommit())}</div>
+
+    <div class="pure-u-1-24">${memberPullRequests.size()}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>
+    <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(memberPullRequests))}</div>
   </div>
   @if (member.getMemberInRepos().size() > 1)
     @for (AliasMemberInRepo repo : member.getMemberInRepos())
@@ -186,14 +190,16 @@
         <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
         <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
         <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
-        <div class="pure-u-1-24">${repoPullRequests.size()}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(repoPullRequests))}</div>
+
         <div class="pure-u-2-24">${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
         <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
         <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
         <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
+
+        <div class="pure-u-1-24">${repoPullRequests.size()}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>
+        <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(repoPullRequests))}</div>
       </div>
     @endfor
   @endif
@@ -204,7 +210,7 @@
     </summary>
     <div class="pure-g file-item nested-1">
       <div class="pure-u-1-24">#</div>
-      <div class="pure-u-7-24">Folder</div>
+      <div class="pure-u-7-24">Repo</div>
       <div class="pure-u-1-24">Words</div>
       <div class="pure-u-1-24">Lines</div>
       <div class="pure-u-1-24">Files</div>
@@ -216,7 +222,7 @@
       @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
         <div class="pure-g file-item nested-1">
           <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
-          <div class="pure-u-7-24">${FilePathUtils.getLastPathPart(commitEntry.get().getGitRepo().getRepoName())}</div>
+          <div class="pure-u-7-24">${commitEntry.get().getGitRepo().getRepoName()}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
