@@ -71,11 +71,12 @@
     margin-top: 20px;
     padding: 10px;
     background: #009496;
-    color: #EFEFEF;
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .title-lv1 .member-name {
-    font-weight: bold;
+    /*font-weight: bold;*/
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .title-lv2 {
