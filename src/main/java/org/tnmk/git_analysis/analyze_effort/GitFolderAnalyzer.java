@@ -49,6 +49,12 @@ public class GitFolderAnalyzer {
         log.info("Fetched {}!", repoPath);
       }
       log.info("Analyzing {}...", repoPath);
+
+      String cloneUrl = GitRepoHelper.getGitCloneUrl(repository);
+      String webUrl = GitRepoHelper.getGitSourceCodeUrl(repository);
+      String projectName = GitRepoHelper.getProjectName(repository);
+      String repoName = GitRepoHelper.getRepoName(repository);
+
       // key: member name
       Map<String, Member> members = new HashMap<>();
 
@@ -59,7 +65,6 @@ public class GitFolderAnalyzer {
       Optional<List<String>> pullRequestNamesOnDev = pullRequestsOnDevOptional.map(prsOnDev -> prsOnDev.stream().map(AnyObjectId::getName).toList());
       for (RevCommit commit : logCommand.call()) {
         LocalDateTime commitDateTime = getCommitDateTime(commit);
-//        log.info("Commit: {}, time: {}, author: {}", commit.getName(), commitDateTime, commit.getAuthorIdent().getName());
         if (commitDateTime.isBefore(startTimeToAnalyze)) {
           // All next commits in the loop will just have before time, so we can break the loop.
           break;
@@ -99,21 +104,8 @@ public class GitFolderAnalyzer {
           members.put(implementor, member);
         }
       }
-//      filterPullRequests(repository, allPullRequests);
-//      log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
       log.info("\tIgnored members: " + ignoredMembers);
       return members;
     }
   }
-
-//  private void filterPullRequests(Repository repository, List<RevCommit> allPullRequests) throws GitAPIException, IOException {
-//    List<RevCommit> pullRequestsOnDev = gitPullRequestService.getPullRequestsOnDev(startTimeToAnalyze, endTimeToAnalyze, repository);
-//    List<String> pullRequestNamesOnDev = pullRequestsOnDev.stream().map(AnyObjectId::getName).toList();
-//    List<RevCommit> pullRequestsOnMaster = allPullRequests.stream().filter(
-//      c -> !pullRequestNamesOnDev.contains(c.getName())
-//    ).collect(Collectors.toList());
-//    log.info("Pull Requests on Master: \n" + pullRequestsOnMaster.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")) + "\n\n");
-//    log.info("Pull Requests on Dev: \n" + pullRequestsOnDev.stream().map(c -> c.getName()).collect(Collectors.joining(", \n")));
-//  }
-
 }
