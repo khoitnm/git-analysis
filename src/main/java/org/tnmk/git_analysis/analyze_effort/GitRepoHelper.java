@@ -28,9 +28,15 @@ public class GitRepoHelper {
   }
 
   public static String getProjectName(String cloneUrl) {
-    String[] urlParts = cloneUrl.split("/");
-    // The project name is usually the second last part of the URL
-    return urlParts[urlParts.length - 2];
+    if (cloneUrl.startsWith("git@")) {
+      int firstColon = cloneUrl.indexOf(':');
+      int firstSlash = cloneUrl.indexOf('/');
+      return cloneUrl.substring(firstColon + 1, firstSlash);
+    } else {
+      String[] urlParts = cloneUrl.split("/");
+      // The project name is usually the second last part of the URL
+      return urlParts[urlParts.length - 2];
+    }
   }
 
 

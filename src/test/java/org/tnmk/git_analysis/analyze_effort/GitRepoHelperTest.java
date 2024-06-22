@@ -9,7 +9,7 @@ public class GitRepoHelperTest {
   @ParameterizedTest
   @CsvSource({
     "https://git.customdomain.com/projects/SOP/repos/my-sample-repository.git, git.customdomain.com",
-    // "git@git.customdomain.com:SOP/my-sample-repository.git, git.customdomain.com", // This URL should never happen in real life.
+    "git@git.customdomain.com:SOP/my-sample-repository.git, git.customdomain.com", // This URL happens in Github
     "ssh://git@git.customdomain.com:7999/sop/my-sample-repository.git, git.customdomain.com",
     "https://github.com/khoitnm/git-analysis.git, github.com",
   })
@@ -21,6 +21,7 @@ public class GitRepoHelperTest {
   @ParameterizedTest
   @CsvSource({
     "https://git.customdomain.com/scm/sop/my-sample-repository.git, sop",
+    "git@git.customdomain.com:SOP/my-sample-repository.git, SOP",
     "ssh://git@git.customdomain.com:7999/sop/my-sample-repository.git, sop",
     "https://github.com/khoitnm/git-analysis.git, khoitnm",
   })
@@ -32,6 +33,7 @@ public class GitRepoHelperTest {
   @ParameterizedTest
   @CsvSource({
     "https://git.customdomain.com/projects/SOP/repos/my-sample-repository.git, my-sample-repository",
+    "git@git.customdomain.com:SOP/my-sample-repository.git, my-sample-repository",
     "ssh://git@git.customdomain.com:7999/sop/my-sample-repository.git, my-sample-repository",
     "https://github.com/khoitnm/git-analysis.git, git-analysis",
   })
