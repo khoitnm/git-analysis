@@ -153,8 +153,8 @@
 <span class="sub-title">
   from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS)} weeks)
 </span>
-<button id="btnCommitMetrics" onClick="showCommitsMetrics()" class="tab-header">Commits and Files</button>
-<button id="btnContributionGraph" onClick="showContributionGraph()" class="tab-header">Graph</button>
+<button id="btnCommitMetrics" onClick="showCommitsMetrics()" class="tab-header">Commit Metrics</button>
+<button id="btnContributionGraph" onClick="showContributionGraph()" class="tab-header">Daily Contribution Graph</button>
 
 <div id="commits-metrics">
   @for (var memberEntry : ForSupport.of(members))
