@@ -35,7 +35,7 @@
     background: rgba(0, 0, 0, 0.03);
   }
 
-  details {
+  summary {
     cursor: pointer;
   }
 
