@@ -129,250 +129,298 @@
   .commit-link:visited {
     color: #445454;
   }
+
+  .active-tab {
+    display: block;
+  }
+
+  .inactive-tab {
+    display: none;
+  }
+
+  .tab-header {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .active-tab-header {
+    background: #009496;
+    color: #EFEFEF;
+  }
 </style>
 <span class="title">Repositories Analysis</span>
-<span
-  class="sub-title">from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS)} weeks)</span>
+<span class="sub-title">
+  from ${fromDateTime.format(reportDateTimeFormatter)} to ${toDateTime.format(reportDateTimeFormatter)} (${fromDateTime.until(toDateTime, ChronoUnit.WEEKS)} weeks)
+</span>
+<button id="btnCommitMetrics" onClick="showCommitsMetrics()" class="tab-header">Commits and Files</button>
+<button id="btnContributionGraph" onClick="showContributionGraph()" class="tab-header">Graph</button>
 
-@for (AliasMemberInManyRepos member : members)
-  !{var memberPullRequests = member.pullRequests();}
-  <div class="pure-g title-lv1">
-    <div class="pure-u-6-24">${member.getAliases().toString()}</div>
-    <div class="pure-u-1-24"
-         title="Words in commits (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
-      Words
-    </div>
-    <div class="pure-u-1-24"
-         title="Lines in commits (which could be different from changed lines in PR); and it doesn't count the changes in the merge commit.">
-      Lines
-    </div>
-    <div class="pure-u-1-24"
-         title="Files in commits (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
-      Files
-    </div>
-
-    <div class="pure-u-2-24">Commits</div>
-    <div class="pure-u-2-24">Words/Commit</div>
-    <div class="pure-u-2-24">Lines/Commit</div>
-    <div class="pure-u-2-24">Files/Commit</div>
-
-    <div class="pure-u-1-24">PRs</div>
-    <div class="pure-u-2-24">Words/PR</div>
-    <div class="pure-u-2-24">Lines/PR</div>
-    <div class="pure-u-2-24">Files/PR</div>
-  </div>
-  <div class="pure-g repo-report-item repo-report-item-main">
-    <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
-      Overall
-      @if (member.getMemberInRepos().size() == 1)
-        - ${GitFoldersReportHelper.getRepoName(member.getMemberInRepos().get(0).getRepoPath())}
-      @endif
-    </div>
-    <div class="pure-u-1-24">${decimalFormat.format(member.totalWords())}</div>
-    <div class="pure-u-1-24">${decimalFormat.format(member.totalLines())}</div>
-    <div class="pure-u-1-24">${decimalFormat.format(member.totalFiles())}</div>
-
-    <div class="pure-u-2-24">${decimalFormat.format(member.commitsSize())}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(member.avgWordsPerCommit())}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(member.avgLinesPerCommit())}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(member.avgFilesPerCommit())}</div>
-
-    <div class="pure-u-1-24">${memberPullRequests.size()}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>
-    <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(memberPullRequests))}</div>
-  </div>
-  @if (member.getMemberInRepos().size() > 1)
-    @for (AliasMemberInRepo repo : member.getMemberInRepos())
-      !{var repoPullRequests = repo.getAliasMember().pullRequests();}
-      <div class="pure-g repo-report-item">
-        <div class="pure-u-6-24" title="${repo.getRepoPath()}">${GitFoldersReportHelper.getRepoName(repo.getRepoPath())}</div>
-        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
-        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
-        <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
-
-        <div class="pure-u-2-24">${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
-
-        <div class="pure-u-1-24">${repoPullRequests.size()}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>
-        <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(repoPullRequests))}</div>
-      </div>
-    @endfor
-  @endif
-  <details class="">
-    <summary class="repo-report-item repo-report-item-main"
-             title="Pull Requests: Despite efforts to exclude PRs from 'dev' to 'master', the lack of permission for BitBucket server integration resulted in some PRs not being successfully excluded, although most were.">
-      Pull Requests
-    </summary>
-    <div class="pure-g file-item nested-1">
-      <div class="pure-u-1-24">#</div>
-      <div class="pure-u-7-24">Repo</div>
-      <div class="pure-u-1-24">Words</div>
-      <div class="pure-u-1-24">Lines</div>
-      <div class="pure-u-1-24">Files</div>
-      <div class="pure-u-6-24">CommitId</div>
-      <div class="pure-u-3-24">DateTime</div>
-      <div class="pure-u-4-24">Merged by</div>
-    </div>
-    <div class="files-container">
-      @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
-        <div class="pure-g file-item nested-1">
-          <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
-          <div class="pure-u-7-24">${commitEntry.get().getGitRepo().getRepoName()}</div>
-          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
-          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
-          <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
-          <div class="pure-u-6-24"><a href="${commitEntry.get().getCommitUrl()}" class="commit-link">${commitEntry.get().getCommitRevision()}</a>
-          </div>
-          <div class="pure-u-3-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-4-24">${commitEntry.get().getCommitter()}</div>
-        </div>
-      @endfor
-    </div>
-  </details>
-  <details class="" open>
-    <summary class="repo-report-item repo-report-item-main">Top ${GitFoldersReportHelper.TOP_FILES_TO_REPORT_PER_MEMBER} committed files:</summary>
-    <div class="pure-g file-item nested-1">
-      <div class="pure-u-1-24">#</div>
-      <div class="pure-u-1-24">Words</div>
-      <div class="pure-u-1-24">Lines</div>
-      <div class="pure-u-5-24">CommitId</div>
-      <div class="pure-u-2-24">DateTime</div>
-      <div class="pure-u-14-24">File</div>
-    </div>
-    <div class="files-container">
-      @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
-        <div class="pure-g file-item nested-1">
-          <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
-          <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
-          <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
-          <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}" class="commit-link">${fileEntry.get().getCommitRevision()}</a></div>
-          <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}" class="commit-link">${fileEntry.get().getNewPath()}</a></div>
-        </div>
-      @endfor
-    </div>
-  </details>
-@endfor
-
-
-@for(AliasMemberInManyRepos member : members)
-  !{var memberKey = member.getMemberKey();}
-  <div id="heatmap_${memberKey}"></div>
-  !{ PlotlyData plotlyData = GitContributionsPerDayChartHelper.getMemberContributionsEachDayChartData(fromDateTime, toDateTime, member);}
-
-  <script>
-    var x = [];
-    @for(int i = 0; i < plotlyData.getX().size(); i++)
-    x.push('${plotlyData.getX().get(i).format(GitFoldersHtmlReporter.chartDateTimeFormatter)}');
-    @endfor
-
-    var y = [];
-    @for(int i = 0; i < plotlyData.getY().size(); i++)
-    y.push('${plotlyData.getY().get(i)}');
-    @endfor
-
-    var texts = [];
-    @for(int i = 0; i < plotlyData.getTexts().length; i++)
-    var itext = [];
-    @for(int j = 0; j < plotlyData.getTexts()[i].length; j++)
-    itext.push('${plotlyData.getTexts()[i][j]}');
-    @endfor
-    texts.push(itext);
-    @endfor
-
-    var data_${memberKey} = [
-      // {
-      //   z: [[10, 20, 30, 40, 50], [20, 30, 40, 50, 60], [30, 40, 50, 60, 70], [40, 50, 60, 70, 80]],
-      //   x: ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04', '2023-01-05'],
-      //   y: ['Mon', 'Tues', 'Weds', 'Thurs'],
-      //   type: 'heatmap'
-      // }
-      {
-        z: ${plotlyData.getZAsString()},
-        x: x,
-        y: y,
-        type: 'heatmap',
-        text: texts,
-        hoverinfo: 'text',
-        colorscale: [
-          [0, 'rgb(35,35,35)'],
-          [0.001, 'rgb(0,87,87)'],
-          [0.3, 'rgb(1,155,155)'],
-          [0.4, 'rgb(0,199,199)'],
-          [0.5, 'rgb(0,255,255)'],
-          [1, 'rgb(234,255,255)']
-        ],
-        zmin: 0,
-        zmax: 10000
-      }
-    ];
-    var annotations = [];
-    var dataObj = data_${memberKey}[0];
-    for (var i = 0; i < dataObj.y.length; i++) {
-      for (var j = 0; j < dataObj.x.length; j++) {
-        var currentValue = dataObj.z[i][j];
-        var textColor = 'white'; // Optional: Set text color based on cell value
-
-        var annotation = {
-          xref: 'x1',
-          yref: 'y1',
-          x: dataObj.x[j],
-          y: dataObj.y[i],
-          text: '',//currentValue.toFixed(2),
-          font: {
-            family: 'Arial',
-            size: 12,
-            color: textColor
-          },
-          showarrow: false,
-          align: 'center',
-          xanchor: 'center',
-          yanchor: 'middle',
-          bordercolor: 'rgb(0,0,0)', // Border color
-          borderwidth: 2, // Border width
-          width: 20,
-          height: 20
-        };
-        annotations.push(annotation);
-      }
+<div id="commits-metrics">
+  @for (var memberEntry : ForSupport.of(members))
+    !{
+        var member = memberEntry.get();
+        var memberPullRequests = member.pullRequests();
     }
-    var layout_${memberKey} = {
-      width: ${100 + 80 + (fromDateTime.until(toDateTime, ChronoUnit.WEEKS) + 1) * 27},
-      height: 380,
-      title: 'Changed words of ${member.getAliases().toString()}',
-      xaxis: {
-        // title: 'Date'
-        // tickformat: '%Y-%m-%d'
-      },
-      yaxis: {
-        title: '',
-        // tickformat: '%a'
-        // tickvals: [1, 3, 5]
-      },
-      xgap: 5,
-      ygap: 5,
-      // annotations: annotations
-    };
+    <div class="pure-g title-lv1">
+      <div class="pure-u-6-24">${memberEntry.getIndex()}. ${member.getAliases().stream().collect(Collectors.joining(", "))}</div>
+      <div class="pure-u-1-24"
+           title="Words in commits (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
+        Words
+      </div>
+      <div class="pure-u-1-24"
+           title="Lines in commits (which could be different from changed lines in PR); and it doesn't count the changes in the merge commit.">
+        Lines
+      </div>
+      <div class="pure-u-1-24"
+           title="Files in commits (which could be different from changed files in PR); and it doesn't count the changes in the merge commit.">
+        Files
+      </div>
 
-    Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});
+      <div class="pure-u-2-24">Commits</div>
+      <div class="pure-u-2-24">Words/Commit</div>
+      <div class="pure-u-2-24">Lines/Commit</div>
+      <div class="pure-u-2-24">Files/Commit</div>
 
-    // Javascript on heatmap click event
-    var heatmap = document.getElementById('heatmap_${memberKey}');
+      <div class="pure-u-1-24">PRs</div>
+      <div class="pure-u-2-24">Words/PR</div>
+      <div class="pure-u-2-24">Lines/PR</div>
+      <div class="pure-u-2-24">Files/PR</div>
+    </div>
+    <div class="pure-g repo-report-item repo-report-item-main">
+      <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
+        Overall
+        @if (member.getMemberInRepos().size() == 1)
+          - ${GitFoldersReportHelper.getRepoName(member.getMemberInRepos().get(0).getRepoPath())}
+        @endif
+      </div>
+      <div class="pure-u-1-24">${decimalFormat.format(member.totalWords())}</div>
+      <div class="pure-u-1-24">${decimalFormat.format(member.totalLines())}</div>
+      <div class="pure-u-1-24">${decimalFormat.format(member.totalFiles())}</div>
 
-    heatmap.on('plotly_click', function (data) {
-      var x = data.points[0].x;
-      var y = data.points[0].y;
-      var z = data.points[0].z;
+      <div class="pure-u-2-24">${decimalFormat.format(member.commitsSize())}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(member.avgWordsPerCommit())}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(member.avgLinesPerCommit())}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(member.avgFilesPerCommit())}</div>
 
-      // Perform your action here
-      console.log('You clicked on cell with coordinates: x=' + x + ', y=' + y + ', z=' + z);
-    });
-  </script>
-@endfor
+      <div class="pure-u-1-24">${memberPullRequests.size()}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>
+      <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(memberPullRequests))}</div>
+    </div>
+    @if (member.getMemberInRepos().size() > 1)
+      @for (AliasMemberInRepo repo : member.getMemberInRepos())
+        !{var repoPullRequests = repo.getAliasMember().pullRequests();}
+        <div class="pure-g repo-report-item">
+          <div class="pure-u-6-24" title="${repo.getRepoPath()}">${GitFoldersReportHelper.getRepoName(repo.getRepoPath())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalWords())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalLines())}</div>
+          <div class="pure-u-1-24">${decimalFormat.format(repo.getAliasMember().totalFiles())}</div>
+
+          <div class="pure-u-2-24">${decimalFormat.format(repo.getAliasMember().commitsSize())}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgWordsPerCommit())}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
+
+          <div class="pure-u-1-24">${repoPullRequests.size()}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>
+          <div class="pure-u-2-24">${"%.1f".formatted(avgFiles(repoPullRequests))}</div>
+        </div>
+      @endfor
+    @endif
+    <details class="">
+      <summary class="repo-report-item repo-report-item-main"
+               title="Pull Requests: Despite efforts to exclude PRs from 'dev' to 'master', the lack of permission for BitBucket server integration resulted in some PRs not being successfully excluded, although most were.">
+        Pull Requests
+      </summary>
+      <div class="pure-g file-item nested-1">
+        <div class="pure-u-1-24">#</div>
+        <div class="pure-u-7-24">Repo</div>
+        <div class="pure-u-1-24">Words</div>
+        <div class="pure-u-1-24">Lines</div>
+        <div class="pure-u-1-24">Files</div>
+        <div class="pure-u-6-24">CommitId</div>
+        <div class="pure-u-3-24">DateTime</div>
+        <div class="pure-u-4-24">Merged by</div>
+      </div>
+      <div class="files-container">
+        @for (var commitEntry : ForSupport.of(GitFoldersReportHelper.sortPullRequestsByWords(member)))
+          <div class="pure-g file-item nested-1">
+            <div class="pure-u-1-24">${commitEntry.getIndex() + 1}</div>
+            <div class="pure-u-7-24">${commitEntry.get().getGitRepo().getRepoName()}</div>
+            <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
+            <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
+            <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
+            <div class="pure-u-6-24"><a href="${commitEntry.get().getCommitUrl()}" class="commit-link">${commitEntry.get().getCommitRevision()}</a>
+            </div>
+            <div class="pure-u-3-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
+            <div class="pure-u-4-24">${commitEntry.get().getCommitter()}</div>
+          </div>
+        @endfor
+      </div>
+    </details>
+    <details class="" open>
+      <summary class="repo-report-item repo-report-item-main">Top ${GitFoldersReportHelper.TOP_FILES_TO_REPORT_PER_MEMBER} committed files:</summary>
+      <div class="pure-g file-item nested-1">
+        <div class="pure-u-1-24">#</div>
+        <div class="pure-u-1-24">Words</div>
+        <div class="pure-u-1-24">Lines</div>
+        <div class="pure-u-5-24">CommitId</div>
+        <div class="pure-u-2-24">DateTime</div>
+        <div class="pure-u-14-24">File</div>
+      </div>
+      <div class="files-container">
+        @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
+          <div class="pure-g file-item nested-1">
+            <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
+            <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
+            <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
+            <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}" class="commit-link">${fileEntry.get().getCommitRevision()}</a></div>
+            <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
+            <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}" class="commit-link">${fileEntry.get().getNewPath()}</a></div>
+          </div>
+        @endfor
+      </div>
+    </details>
+  @endfor
+</div>
+
+
+<div id="contribution-graph">
+  @for(AliasMemberInManyRepos member : members)
+    !{var memberKey = member.getMemberKey();}
+    <div id="heatmap_${memberKey}"></div>
+    !{ PlotlyData plotlyData = GitContributionsPerDayChartHelper.getMemberContributionsEachDayChartData(fromDateTime, toDateTime, member);}
+
+    <script>
+      var x = [];
+      @for(int i = 0; i < plotlyData.getX().size(); i++)
+      x.push('${plotlyData.getX().get(i).format(GitFoldersHtmlReporter.chartDateTimeFormatter)}');
+      @endfor
+
+      var y = [];
+      @for(int i = 0; i < plotlyData.getY().size(); i++)
+      y.push('${plotlyData.getY().get(i)}');
+      @endfor
+
+      var texts = [];
+      @for(int i = 0; i < plotlyData.getTexts().length; i++)
+      var itext = [];
+      @for(int j = 0; j < plotlyData.getTexts()[i].length; j++)
+      itext.push('${plotlyData.getTexts()[i][j]}');
+      @endfor
+      texts.push(itext);
+      @endfor
+
+      var data_${memberKey} = [
+        // {
+        //   z: [[10, 20, 30, 40, 50], [20, 30, 40, 50, 60], [30, 40, 50, 60, 70], [40, 50, 60, 70, 80]],
+        //   x: ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04', '2023-01-05'],
+        //   y: ['Mon', 'Tues', 'Weds', 'Thurs'],
+        //   type: 'heatmap'
+        // }
+        {
+          z: ${plotlyData.getZAsString()},
+          x: x,
+          y: y,
+          type: 'heatmap',
+          text: texts,
+          hoverinfo: 'text',
+          colorscale: [
+            [0, 'rgb(35,35,35)'],
+            [0.001, 'rgb(0,87,87)'],
+            [0.3, 'rgb(1,155,155)'],
+            [0.4, 'rgb(0,199,199)'],
+            [0.5, 'rgb(0,255,255)'],
+            [1, 'rgb(234,255,255)']
+          ],
+          zmin: 0,
+          zmax: 10000
+        }
+      ];
+      var annotations = [];
+      var dataObj = data_${memberKey}[0];
+      for (var i = 0; i < dataObj.y.length; i++) {
+        for (var j = 0; j < dataObj.x.length; j++) {
+          var currentValue = dataObj.z[i][j];
+          var textColor = 'white'; // Optional: Set text color based on cell value
+
+          var annotation = {
+            xref: 'x1',
+            yref: 'y1',
+            x: dataObj.x[j],
+            y: dataObj.y[i],
+            text: '',//currentValue.toFixed(2),
+            font: {
+              family: 'Arial',
+              size: 12,
+              color: textColor
+            },
+            showarrow: false,
+            align: 'center',
+            xanchor: 'center',
+            yanchor: 'middle',
+            bordercolor: 'rgb(0,0,0)', // Border color
+            borderwidth: 2, // Border width
+            width: 20,
+            height: 20
+          };
+          annotations.push(annotation);
+        }
+      }
+      var layout_${memberKey} = {
+        width: ${100 + 80 + (fromDateTime.until(toDateTime, ChronoUnit.WEEKS) + 1) * 27},
+        height: 380,
+        title: 'Changed words of ${member.getAliases().toString()}',
+        xaxis: {
+          // title: 'Date'
+          // tickformat: '%Y-%m-%d'
+        },
+        yaxis: {
+          title: '',
+          // tickformat: '%a'
+          // tickvals: [1, 3, 5]
+        },
+        xgap: 5,
+        ygap: 5,
+        // annotations: annotations
+      };
+
+      Plotly.newPlot('heatmap_${memberKey}', data_${memberKey}, layout_${memberKey});
+
+      // Javascript on heatmap click event
+      var heatmap = document.getElementById('heatmap_${memberKey}');
+
+      heatmap.on('plotly_click', function (data) {
+        var x = data.points[0].x;
+        var y = data.points[0].y;
+        var z = data.points[0].z;
+
+        // Perform your action here
+        console.log('You clicked on cell with coordinates: x=' + x + ', y=' + y + ', z=' + z);
+      });
+    </script>
+  @endfor
+</div>
+<script>
+  function showCommitsMetrics() {
+    document.getElementById('commits-metrics').className = 'active-tab';
+    document.getElementById('contribution-graph').className = 'inactive-tab';
+
+    document.getElementById('btnCommitMetrics').classList.add('active-tab-header');
+    document.getElementById('btnContributionGraph').classList.remove('active-tab-header');
+  }
+
+  function showContributionGraph() {
+    document.getElementById('commits-metrics').className = 'inactive-tab';
+    document.getElementById('contribution-graph').className = 'active-tab';
+
+    document.getElementById('btnCommitMetrics').classList.remove('active-tab-header');
+    document.getElementById('btnContributionGraph').classList.add('active-tab-header');
+  }
+
+  showCommitsMetrics();
+</script>
 </body>
 </html>
