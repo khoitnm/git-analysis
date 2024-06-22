@@ -61,9 +61,12 @@
   .title-lv1 {
     margin-top: 20px;
     padding: 10px;
-    font-weight: bold;
     background: #009496;
     color: #EFEFEF;
+  }
+
+  .title-lv1 .member-name {
+    font-weight: bold;
   }
 
   .title-lv2 {
@@ -165,7 +168,7 @@
         var memberPullRequests = member.pullRequests();
     }
     <div class="pure-g title-lv1">
-      <div class="pure-u-6-24">${memberEntry.getIndex()}. ${member.getAliases().stream().collect(Collectors.joining(", "))}</div>
+      <div class="pure-u-6-24 member-name">${memberEntry.getIndex()}. ${member.getAliases().stream().collect(Collectors.joining(", "))}</div>
       <div class="pure-u-1-24"
            title="Words in commits (which could be different from changed words in PR); and it doesn't count the changes in the merge commit.">
         Words
