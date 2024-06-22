@@ -29,6 +29,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 public class GitFolderAnalyzer {
   private final GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties;
   private final GitPullRequestService gitPullRequestService;
+  private final GitRepoService gitRepoService;
 
   /**
    * @return Map of members: key: member name, value: member.
@@ -50,10 +51,7 @@ public class GitFolderAnalyzer {
       }
       log.info("Analyzing {}...", repoPath);
 
-      String cloneUrl = GitRepoHelper.getGitCloneUrl(repository);
-      String webUrl = GitRepoHelper.getGitSourceCodeUrl(repository);
-      String projectName = GitRepoHelper.getProjectName(repository);
-      String repoName = GitRepoHelper.getRepoName(repository);
+      String sourceCodeUrl = gitRepoService.getGitSourceCodeUrl(repository);
 
       // key: member name
       Map<String, Member> members = new HashMap<>();

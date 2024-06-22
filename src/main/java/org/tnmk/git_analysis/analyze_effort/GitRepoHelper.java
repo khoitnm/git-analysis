@@ -10,15 +10,6 @@ public class GitRepoHelper {
     return remoteUrl;
   }
 
-  public static String getGitSourceCodeUrl(Repository repository) {
-    String cloneUrl = getGitCloneUrl(repository);
-    String host = getHostFromCloneUrl(cloneUrl);
-    String projectName = getProjectName(cloneUrl);
-    String repoName = getRepoName(cloneUrl);
-    // TODO The pattern will be different for Github, Gitlab, Bitbucket, etc.
-    // This is the pattern for Bitbucket
-    return "https://" + host + "/projects/" + projectName + "/repos/" + repoName + "/browse";
-  }
 
   public static String getHostFromCloneUrl(String cloneUrl) {
     if (cloneUrl.startsWith("https://")) {
@@ -29,7 +20,8 @@ public class GitRepoHelper {
       return cloneUrl.substring(4, firstColon); // 4 is the length of "git@"
     } else if (cloneUrl.startsWith("ssh://")) {
       int lastAt = cloneUrl.lastIndexOf('@');
-      return cloneUrl.substring(6, lastAt); // 6 is the length of "ssh://"
+      int firstColonAfterAt = cloneUrl.indexOf(':', lastAt);
+      return cloneUrl.substring(lastAt + 1, firstColonAfterAt);
     } else {
       throw new IllegalArgumentException("Unsupported URL format: " + cloneUrl);
     }
