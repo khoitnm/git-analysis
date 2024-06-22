@@ -117,6 +117,18 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: inset 0px 1px 0px 0px #FFF;
   }
+
+  .commit-link:link {
+    color: #008383;
+  }
+
+  .commit-link:hover {
+    color: #009496;
+  }
+
+  .commit-link:visited {
+    color: #4c6262;
+  }
 </style>
 <span class="title">Repositories Analysis</span>
 <span
@@ -208,7 +220,8 @@
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getWordsCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getLinesCount())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(commitEntry.get().getFilesCount())}</div>
-          <div class="pure-u-6-24"><a href="${commitEntry.get().getCommitUrl()}">${commitEntry.get().getCommitRevision()}</a></div>
+          <div class="pure-u-6-24"><a href="${commitEntry.get().getCommitUrl()}" class="commit-link">${commitEntry.get().getCommitRevision()}</a>
+          </div>
           <div class="pure-u-3-24">${commitDateTimeFormatter.format(commitEntry.get().getCommitDateTime())}</div>
           <div class="pure-u-4-24">${commitEntry.get().getCommitter()}</div>
         </div>
@@ -231,9 +244,9 @@
           <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
           <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
           <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
-          <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}">${fileEntry.get().getCommitRevision()}</a></div>
+          <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}" class="commit-link">${fileEntry.get().getCommitRevision()}</a></div>
           <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-          <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}">${fileEntry.get().getNewPath()}</a></div>
+          <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}" class="commit-link">${fileEntry.get().getNewPath()}</a></div>
         </div>
       @endfor
     </div>
