@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "git-repo-api")
-public class GitRepoApiProperties {
-  private List<GitRepoApiConnectionProperties> connections;
+@ConfigurationProperties(prefix = "git-repo")
+public class GitRepoProperties {
+  private List<GitRepoConfigProperties> repositories;
 }

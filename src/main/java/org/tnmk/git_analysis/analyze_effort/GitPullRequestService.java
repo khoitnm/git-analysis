@@ -7,7 +7,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.springframework.stereotype.Service;
-import org.tnmk.git_analysis.config.GitRepoApiConnectionProperties;
+import org.tnmk.git_analysis.config.GitRepoConfigProperties;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -157,12 +157,12 @@ public class GitPullRequestService {
     }
     String projectKey = urlParts[urlParts.length - 2];
 
-    GitRepoApiConnectionProperties gitRepoApiConnectionProperties = gitApiConnectionService.findApiConnection(repository).orElseThrow(() -> new IllegalArgumentException("Cannot find the Git API connection for the repository: " + repository.getDirectory().getAbsolutePath()));
-    return getPullRequestsFromBitBucket(gitRepoApiConnectionProperties, projectKey, repoSlug, gitRepoApiConnectionProperties.getAccessToken());
+    GitRepoConfigProperties gitRepoConfigProperties = gitApiConnectionService.findApiConnection(repository).orElseThrow(() -> new IllegalArgumentException("Cannot find the Git API connection for the repository: " + repository.getDirectory().getAbsolutePath()));
+    return getPullRequestsFromBitBucket(gitRepoConfigProperties, projectKey, repoSlug, gitRepoConfigProperties.getAccessToken());
   }
 
-  private String getPullRequestsFromBitBucket(GitRepoApiConnectionProperties gitRepoApiConnectionProperties, String projectKey, String repoSlug, String accessToken) throws IOException {
-    String url = "https://" + gitRepoApiConnectionProperties.getUrlPart() + "/rest/api/2.0/projects/" + projectKey + "/repos/" + repoSlug + "/pull-requests?at=refs/heads/master&state=OPEN";
+  private String getPullRequestsFromBitBucket(GitRepoConfigProperties gitRepoConfigProperties, String projectKey, String repoSlug, String accessToken) throws IOException {
+    String url = "https://" + gitRepoConfigProperties.getHost() + "/rest/api/2.0/projects/" + projectKey + "/repos/" + repoSlug + "/pull-requests?at=refs/heads/master&state=OPEN";
 
     URL obj = new URL(url);
     HttpURLConnection connection = (HttpURLConnection) obj.openConnection();

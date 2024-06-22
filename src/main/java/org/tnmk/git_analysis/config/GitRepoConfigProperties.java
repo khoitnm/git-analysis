@@ -6,8 +6,8 @@ import org.tnmk.git_analysis.analyze_effort.model.GitService;
 
 @Getter
 @Setter
-public class GitRepoApiConnectionProperties {
-  private String urlPart;
+public class GitRepoConfigProperties {
+  private String host;
   private GitService serviceType;
   private String accessToken;
 }
