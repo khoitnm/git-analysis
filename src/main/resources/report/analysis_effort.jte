@@ -142,11 +142,13 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
   }
 
   .active-tab-header {
     background: #009496;
     color: #EFEFEF;
+    cursor: default;
   }
 </style>
 <span class="title">Repositories Analysis</span>
