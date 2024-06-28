@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.lib.Repository;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.GitRepo;
-import org.tnmk.git_analysis.analyze_effort.model.GitServiceType;
 import org.tnmk.git_analysis.config.GitRepoConfigProperties;
 import org.tnmk.git_analysis.config.GitRepoProperties;
 
@@ -29,24 +28,6 @@ public class GitRepoService {
       .repoName(repoName)
       .serviceType(gitRepoConfigProperties.getServiceType())
       .build();
-  }
-
-  public String getGitUrl(Repository repository) {
-
-    String cloneUrl = GitRepoHelper.getGitCloneUrl(repository);
-    String host = GitRepoHelper.getHostFromCloneUrl(cloneUrl);
-    String projectName = GitRepoHelper.getProjectName(cloneUrl);
-    String repoName = GitRepoHelper.getRepoName(cloneUrl);
-
-    GitRepoConfigProperties gitRepoConfigProperties = getGitRepoConfigProperties(host);
-
-    if (gitRepoConfigProperties.getServiceType() == GitServiceType.BITBUCKET) {
-      return "https://" + host + "/projects/" + projectName + "/repos/" + repoName;
-    } else if (gitRepoConfigProperties.getServiceType() == GitServiceType.GITHUB) {
-      return "https://" + host + "/" + projectName + "/" + repoName;
-    } else {
-      throw new IllegalArgumentException("Unsupported service type: " + gitRepoConfigProperties.getServiceType());
-    }
   }
 
   private GitRepoConfigProperties getGitRepoConfigProperties(String host) {

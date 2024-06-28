@@ -27,7 +27,7 @@ import static org.tnmk.git_analysis.analyze_effort.GitCommitHelper.getCommitDate
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GitFolderAnalyzer {
+public class GitRepoAnalyzer {
   private final GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties;
   private final GitPullRequestService gitPullRequestService;
   private final GitRepoService gitRepoService;

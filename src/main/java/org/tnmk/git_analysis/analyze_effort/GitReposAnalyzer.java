@@ -19,13 +19,13 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GitFoldersAnalyzer {
+public class GitReposAnalyzer {
   private final GitAliasProperties gitAliasProperties;
   //  private final GitFoldersLogReporter logReporter;
   private final GitFoldersHtmlReporter htmlReporter;
   private final MemberFilter memberFilter;
   private final MemberMergerByAlias mergeMembers;
-  private final GitFolderAnalyzer gitFolderAnalyzer;
+  private final GitRepoAnalyzer gitRepoAnalyzer;
 
   public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException, JSchException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
@@ -34,7 +34,7 @@ public class GitFoldersAnalyzer {
     List<List<String>> aliasesOfMembers = gitAliasProperties.parseAliasesOfMembers();
     Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
     for (String repositoryPath : repoPaths) {
-      Map<String, Member> membersInOneRepo = gitFolderAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
+      Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
       List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
       List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
         .map(member ->
