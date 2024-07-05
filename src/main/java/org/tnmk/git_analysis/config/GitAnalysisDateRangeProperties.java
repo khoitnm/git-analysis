@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.tnmk.tech_common.utils.DateTimeUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,8 @@ public class GitAnalysisDateRangeProperties {
       return LocalDateTime.now();
     }
     LocalDate localDate = LocalDate.parse(endDate, dateTimeFormatter);
-    return localDate.atStartOfDay();
+
+    // Get the end of the date.
+    return DateTimeUtils.toEndOfDate(localDate);
   }
 }
