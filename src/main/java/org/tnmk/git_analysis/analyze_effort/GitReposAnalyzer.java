@@ -27,28 +27,36 @@ public class GitReposAnalyzer {
   private final MemberMergerByAlias mergeMembers;
   private final GitRepoAnalyzer gitRepoAnalyzer;
 
-  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, List<String> repoPaths, boolean fetch) throws GitAPIException, IOException, JSchException {
+  public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, List<String> repoPaths, boolean fetch)
+    throws GitAPIException, IOException, JSchException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();
     List<List<String>> aliasesOfMembers = gitAliasProperties.parseAliasesOfMembers();
     Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
-    for (String repositoryPath : repoPaths) {
-      Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
-      List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
-      List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
-        .map(member ->
-          AliasMemberInRepo.builder()
-            .aliasMember(member)
-            .repoPath(repositoryPath)
-            .build()
-        ).toList();
-      aliasMembersInManyRepos.addAll(aliasMembersInOneRepo);
-    }
+
+    repoPaths.stream().parallel().forEach(repositoryPath -> {
+      try {
+        Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
+
+        List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
+        List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
+          .map(member ->
+            AliasMemberInRepo.builder()
+              .aliasMember(member)
+              .repoPath(repositoryPath)
+              .build()
+          ).toList();
+        aliasMembersInManyRepos.addAll(aliasMembersInOneRepo);
+      } catch (GitAPIException | IOException | JSchException e) {
+        log.warn("Cannot analyze repo: " + repositoryPath, e);
+      }
+    });
+
     /** key: member's key in {@link  AliasMemberInManyRepos#getMemberKey()} .*/
     List<AliasMemberInManyRepos> membersInAllRepos = groupMembersFromManyReposByAliases(aliasMembersInManyRepos);
 
-//    logReporter.report(membersInAllRepos);
+    //    logReporter.report(membersInAllRepos);
     htmlReporter.report(startTimeToAnalyze, endTimeToAnalyze, membersInAllRepos);
   }
 
