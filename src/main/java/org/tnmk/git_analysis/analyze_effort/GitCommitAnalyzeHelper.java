@@ -29,15 +29,22 @@ public class GitCommitAnalyzeHelper {
    * We want this method, not the parent method to decide whether we should ignore the commit or not
    * is because we don't want this method spend too much effort to analyze the commit if it should be ignored.
    */
-  public static Optional<CommitResult> analyzeCommit(Repository repository, GitRepo gitRepo, RevCommit commit, GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties, Set<String> onlyIncludeMembers) throws IOException, GitAPIException {
+  public static CommitResultByAuthor analyzeCommit(Repository repository, GitRepo gitRepo, RevCommit commit, GitAnalysisIgnoreProperties gitAnalysisIgnoreProperties, Set<String> onlyIncludeMembers) throws IOException, GitAPIException {
     try (DiffFormatter diffFormatter = createDiffFormatter(repository)) {
       LocalDateTime commitDateTime = getCommitDateTime(commit);
       String commitRevision = commit.getName();
       CommitDiffs commitDiffs = findDiff(diffFormatter, commit);
 
-      // If onlyIncludeMembers is empty, we'll analyze all members.
-      if (!CollectionUtils.isEmpty(onlyIncludeMembers) && !onlyIncludeMembers.contains(commitDiffs.getImplementor().toLowerCase().trim())) {
-        return Optional.empty();
+      // Note that if onlyIncludeMembers is empty, we'll analyze all members.
+      String implementor = commitDiffs.getImplementor().toLowerCase().trim();
+      String committer = commitDiffs.getCommitter().toLowerCase().trim();
+      String author = CommitAuthorPolicy.getCommitAuthor(committer, implementor);
+      if (!CollectionUtils.isEmpty(onlyIncludeMembers) && !onlyIncludeMembers.contains(author)) {
+        return CommitResultByAuthor.builder()
+          .implementor(implementor)
+          .committer(committer)
+          .commitResult(Optional.empty())
+          .build();
       }
       // TODO In some repos such as SC, must exclude merged to `master` branch because it's duplicated with PRs to dev.
       List<DiffEntry> diffEntries = commitDiffs.getDiffEntries();
@@ -74,7 +81,7 @@ public class GitCommitAnalyzeHelper {
       if (commitDiffs.getCommitType() == CommitType.PULL_REQUEST) {
         mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
       }
-      return Optional.of(CommitResult.builder()
+      Optional<CommitResult> commitResult = Optional.of(CommitResult.builder()
         .gitRepo(gitRepo)
         .committer(commitDiffs.getCommitter())
         .implementor(commitDiffs.getImplementor())
@@ -85,6 +92,11 @@ public class GitCommitAnalyzeHelper {
         .files(files)
         .build()
       );
+      return CommitResultByAuthor.builder()
+        .implementor(implementor)
+        .committer(committer)
+        .commitResult(commitResult)
+        .build();
     }
   }
 }

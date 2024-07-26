@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import org.tnmk.git_analysis.analyze_effort.CommitAuthorPolicy;
 import org.tnmk.git_analysis.analyze_effort.GitCommitHelper;
 
 import java.time.LocalDateTime;
@@ -63,5 +64,9 @@ public class CommitResult {
 
   public String getCommitUrl() {
     return GitCommitHelper.getCommitUrl(gitRepo, commitRevision);
+  }
+
+  public String getAuthor() {
+    return CommitAuthorPolicy.getCommitAuthor(committer, implementor);
   }
 }

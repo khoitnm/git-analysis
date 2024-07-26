@@ -10,10 +10,7 @@ import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
-import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
-import org.tnmk.git_analysis.analyze_effort.model.CommitType;
-import org.tnmk.git_analysis.analyze_effort.model.GitRepo;
-import org.tnmk.git_analysis.analyze_effort.model.Member;
+import org.tnmk.git_analysis.analyze_effort.model.*;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
 import org.tnmk.git_analysis.git_connection.GitSshHelper;
 
@@ -74,18 +71,15 @@ public class GitRepoAnalyzer {
         }
         if (commitDateTime.isAfter(startTimeToAnalyze)) {
 
-          Optional<CommitResult> foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, gitRepo, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);
-          if (foundCommitResult.isEmpty()) {
-            ignoredMembers.add(commit.getAuthorIdent().getName());
+          CommitResultByAuthor foundCommitResult = GitCommitAnalyzeHelper.analyzeCommit(repository, gitRepo, commit, gitAnalysisIgnoreProperties, onlyIncludeMembers);
+          if (foundCommitResult.getCommitResult().isEmpty()) {
+            ignoredMembers.add(foundCommitResult.getAuthor());
             continue;
           }
-          CommitResult commitResult = foundCommitResult.get();
+          CommitResult commitResult = foundCommitResult.getCommitResult().get();
 
-          // We are counting the effort of each member, so in a PR or a merge commit,
-          // the person who spent the effort is the implementor, not the committer.
-          String implementor = commitResult.getImplementor();
-
-          Member member = members.getOrDefault(implementor, new Member(implementor, gitRepo));
+          String author = commitResult.getAuthor();
+          Member member = members.getOrDefault(author, new Member(author, gitRepo));
           if (commitResult.getCommitType() == CommitType.PULL_REQUEST) {
             // We don't want to count the PR that's used to deploy (let's call them 'deploymentPR):
             // Those PRs has a lot of code from different branches that's contributed from many people.
@@ -100,7 +94,7 @@ public class GitRepoAnalyzer {
           } else {
             member.addCommit(commitResult);
           }
-          members.put(implementor, member);
+          members.put(author, member);
         }
       }
       log.info("\tIgnored members: " + ignoredMembers);
