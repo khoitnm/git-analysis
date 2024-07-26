@@ -20,6 +20,10 @@ class CheckTestFilePolicyTest {
     "some-folder/some-file.test.ts, true",
     "some-folder/some-file.test.jsx, true",
     "some-folder/some-file.test.js, true",
+    "e2e/some-file.js, true",
+    "src/e2e/some-file.js, true",
+    "cypress/some-file.js, true",
+    "src/cypress/some-file.js, true",
   })
   void testIsTestFile(String filePath, boolean expected) {
     boolean result = CheckTestFilePolicy.isTestFile(filePath);
