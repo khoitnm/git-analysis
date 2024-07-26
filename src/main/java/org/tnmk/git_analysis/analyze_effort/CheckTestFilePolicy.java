@@ -4,7 +4,7 @@ import org.tnmk.tech_common.utils.FilePathUtils;
 
 public class CheckTestFilePolicy {
   public static boolean isTestFile(String filePath) {
-    return isTestInJavaBaseLanguages(filePath) || isTestInFE(filePath) || isTestE2E(filePath)
+    return isTestInJvmBaseLanguages(filePath) || isTestInFE(filePath) || isTestE2E(filePath)
       || isTestJMeter(filePath)
       || isTestInPython(filePath) || isTestInRuby(filePath) || isTestInPHP(filePath)
       || isTestIniOS(filePath);
@@ -13,7 +13,7 @@ public class CheckTestFilePolicy {
   /**
    * This is applicable for Java, Groovy, Kotlin, Android, etc.
    */
-  private static boolean isTestInJavaBaseLanguages(String filePath) {
+  private static boolean isTestInJvmBaseLanguages(String filePath) {
     return filePath.contains("src/test/") || filePath.contains("-test/") || filePath.contains("test-") || filePath.contains("Test.java");
   }
 
