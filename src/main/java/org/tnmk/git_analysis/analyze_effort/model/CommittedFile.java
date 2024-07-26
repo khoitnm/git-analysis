@@ -3,6 +3,7 @@ package org.tnmk.git_analysis.analyze_effort.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import org.tnmk.git_analysis.analyze_effort.CheckTestFilePolicy;
 import org.tnmk.git_analysis.analyze_effort.GitCommitHelper;
 
 import java.time.LocalDateTime;
@@ -42,5 +43,9 @@ public class CommittedFile {
     } else {
       throw new IllegalArgumentException("Unsupported service type: " + gitRepo.getServiceType());
     }
+  }
+
+  public boolean isTestFile() {
+    return CheckTestFilePolicy.isTestFile(newPath);
   }
 }

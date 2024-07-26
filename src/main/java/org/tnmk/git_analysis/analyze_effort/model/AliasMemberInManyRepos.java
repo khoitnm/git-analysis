@@ -54,6 +54,18 @@ public class AliasMemberInManyRepos {
     return total;
   }
 
+  public int totalTestWords() {
+    return commits().stream().mapToInt(CommitResult::getTestWordsCount).sum();
+  }
+
+  public int totalTestLines() {
+    return commits().stream().mapToInt(CommitResult::getTestLinesCount).sum();
+  }
+
+  public int totalTestFiles() {
+    return commits().stream().mapToInt(CommitResult::getTestFilesCount).sum();
+  }
+
   public double avgFilesPerCommit() {
     return totalFiles() / (double) commitsSize();
   }

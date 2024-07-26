@@ -62,6 +62,18 @@ public class CommitResult {
     return files.stream().mapToInt(CommittedFile::getChangedWords).sum();
   }
 
+  public int getTestWordsCount() {
+    return files.stream().filter(CommittedFile::isTestFile).mapToInt(CommittedFile::getChangedWords).sum();
+  }
+
+  public int getTestLinesCount() {
+    return files.stream().filter(CommittedFile::isTestFile).mapToInt(CommittedFile::getChangedLines).sum();
+  }
+
+  public int getTestFilesCount() {
+    return (int) files.stream().filter(CommittedFile::isTestFile).count();
+  }
+
   public String getCommitUrl() {
     return GitCommitHelper.getCommitUrl(gitRepo, commitRevision);
   }
