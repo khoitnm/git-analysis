@@ -2,6 +2,7 @@ package org.tnmk.git_analysis.analyze_effort.model;
 
 import org.springframework.util.CollectionUtils;
 import org.tnmk.git_analysis.analyze_effort.AliasMemberHelper;
+import org.tnmk.git_analysis.analyze_effort.report.ReportCommitHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,6 +90,14 @@ public class AliasMember {
 
   public int totalTestFiles() {
     return commits().stream().mapToInt(CommitResult::getTestFilesCount).sum();
+  }
+
+  public String reportTestWords() {
+    return ReportCommitHelper.reportTest(totalTestWords(), totalWords());
+  }
+
+  public String reportTestFiles() {
+    return ReportCommitHelper.reportTest(totalTestFiles(), totalFiles());
   }
 
   public double avgFilesPerCommit() {

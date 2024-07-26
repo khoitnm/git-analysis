@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.tnmk.git_analysis.analyze_effort.AliasMemberHelper;
+import org.tnmk.git_analysis.analyze_effort.report.ReportCommitHelper;
 
 import java.util.List;
 
@@ -52,6 +53,14 @@ public class AliasMemberInManyRepos {
   public int totalWords() {
     int total = commits().stream().mapToInt(CommitResult::getWordsCount).sum();
     return total;
+  }
+
+  public String reportTestWords() {
+    return ReportCommitHelper.reportTest(totalTestWords(), totalWords());
+  }
+
+  public String reportTestFiles() {
+    return ReportCommitHelper.reportTest(totalTestFiles(), totalFiles());
   }
 
   public int totalTestWords() {

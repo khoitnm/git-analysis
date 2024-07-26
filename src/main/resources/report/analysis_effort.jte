@@ -184,7 +184,7 @@
   @for (var memberEntry : ForSupport.of(members))
     !{
         var member = memberEntry.get();
-        var memberPullRequests = member.pullRequests();
+//        var memberPullRequests = member.pullRequests();
     }
     <div class="pure-g title-lv1">
       <div class="pure-u-6-24 member-name">${memberEntry.getIndex()}. ${member.getAliases().stream().collect(Collectors.joining(", "))}</div>
@@ -210,6 +210,8 @@
       <%--      <div class="pure-u-2-24">Words/PR</div>--%>
       <%--      <div class="pure-u-2-24">Lines/PR</div>--%>
       <%--      <div class="pure-u-2-24">Files/PR</div>--%>
+      <div class="pure-u-2-24">Words Test</div>
+      <div class="pure-u-2-24">Files Test</div>
     </div>
     <div class="pure-g repo-report-item repo-report-item-main">
       <div class="pure-u-6-24" title="${getRepoNameFromMemberInRepo(member)}">
@@ -227,6 +229,8 @@
       <div class="pure-u-2-24">${"%.1f".formatted(member.avgLinesPerCommit())}</div>
       <div class="pure-u-2-24">${"%.1f".formatted(member.avgFilesPerCommit())}</div>
 
+      <div class="pure-u-2-24">${member.reportTestWords()}</div>
+      <div class="pure-u-2-24">${member.reportTestFiles()}</div>
       <%--      <div class="pure-u-1-24">${memberPullRequests.size()}</div>--%>
       <%--      <div class="pure-u-2-24">${"%.1f".formatted(avgWords(memberPullRequests))}</div>--%>
       <%--      <div class="pure-u-2-24">${"%.1f".formatted(avgLines(memberPullRequests))}</div>--%>
@@ -246,6 +250,9 @@
           <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgLinesPerCommit())}</div>
           <div class="pure-u-2-24">${"%.1f".formatted(repo.getAliasMember().avgFilesPerCommit())}</div>
 
+          <div class="pure-u-2-24">${repo.getAliasMember().reportTestWords()}</div>
+          <div class="pure-u-2-24">${repo.getAliasMember().reportTestFiles()}</div>
+          
           <%--          <div class="pure-u-1-24">${repoPullRequests.size()}</div>--%>
           <%--          <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>--%>
           <%--          <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>--%>
