@@ -50,6 +50,16 @@ public class CommitResult {
   @Nullable
   private final String mergedTargetBranch;
 
+  /**
+   * A commit may not link to any ticket:
+   * - It could be because the developer forgot put any ticket into the commit message.
+   * - Or it could be because the developer simply just change some code without needing any ticket.
+   */
+  @Nullable
+  private final String ticketId;
+
+  private final String commitMessage;
+
   public int getFilesCount() {
     return files.size();
   }

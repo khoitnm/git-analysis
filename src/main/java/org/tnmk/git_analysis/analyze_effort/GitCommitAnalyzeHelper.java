@@ -81,6 +81,7 @@ public class GitCommitAnalyzeHelper {
       if (commitDiffs.getCommitType() == CommitType.PULL_REQUEST) {
         mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
       }
+      Optional<String> ticketId = GitCommitTicketHelper.extractTicketId(commit.getFullMessage());
       Optional<CommitResult> commitResult = Optional.of(CommitResult.builder()
         .gitRepo(gitRepo)
         .committer(commitDiffs.getCommitter())
@@ -90,6 +91,8 @@ public class GitCommitAnalyzeHelper {
         .commitType(commitDiffs.getCommitType())
         .mergedTargetBranch(mergeTargetBranch)
         .files(files)
+        .commitMessage(commit.getFullMessage())
+        .ticketId(ticketId.orElse(null))
         .build()
       );
       return CommitResultByAuthor.builder()
