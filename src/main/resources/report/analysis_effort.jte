@@ -145,6 +145,18 @@
     color: #445454;
   }
 
+  .commit-link.test-file:link {
+    color: #b18445;
+  }
+
+  .commit-link.test-file:hover {
+    color: #d7a054;
+  }
+
+  .commit-link.test-file:visited {
+    color: #6e6249;
+  }
+
   .active-tab {
     display: block;
   }
@@ -252,7 +264,7 @@
 
           <div class="pure-u-2-24">${repo.getAliasMember().reportTestWords()}</div>
           <div class="pure-u-2-24">${repo.getAliasMember().reportTestFiles()}</div>
-          
+
           <%--          <div class="pure-u-1-24">${repoPullRequests.size()}</div>--%>
           <%--          <div class="pure-u-2-24">${"%.1f".formatted(avgWords(repoPullRequests))}</div>--%>
           <%--          <div class="pure-u-2-24">${"%.1f".formatted(avgLines(repoPullRequests))}</div>--%>
@@ -305,13 +317,19 @@
       </div>
       <div class="files-container">
         @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
-          <div class="pure-g file-item nested-1">
+          !{String linkClass = "commit-link " + (fileEntry.get().isTestFile() ? "test-file" : "");}
+
+          <div class="pure-g file-item nested-1" title="${fileEntry.get().isTestFile() ? "Test File" : ""}">
             <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
             <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
             <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
-            <div class="pure-u-5-24"><a href="${fileEntry.get().getCommitUrl()}" class="commit-link">${fileEntry.get().getCommitRevision()}</a></div>
+            <div class="pure-u-5-24">
+              <a href="${fileEntry.get().getCommitUrl()}" class="${linkClass}">${fileEntry.get().getCommitRevision()}</a>
+            </div>
             <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-            <div class="pure-u-14-24"><a href="${fileEntry.get().getCommitFileUrl()}" class="commit-link">${fileEntry.get().getNewPath()}</a></div>
+            <div class="pure-u-14-24">
+              <a href="${fileEntry.get().getCommitFileUrl()}" class="${linkClass}">${fileEntry.get().getNewPath()}</a>
+            </div>
           </div>
         @endfor
       </div>
