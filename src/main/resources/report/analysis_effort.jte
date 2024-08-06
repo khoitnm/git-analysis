@@ -317,18 +317,18 @@
       </div>
       <div class="files-container">
         @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
-          !{String linkClass = "commit-link " + (fileEntry.get().isTestFile() ? "test-file" : "");}
+          !{String cssLink = "commit-link " + (fileEntry.get().isTestFile() ? "test-file" : "");}
 
           <div class="pure-g file-item nested-1" title="${fileEntry.get().isTestFile() ? "Test File" : ""}">
             <div class="pure-u-1-24">${fileEntry.getIndex() + 1}</div>
             <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedWords())}</div>
             <div class="pure-u-1-24">${decimalFormat.format(fileEntry.get().getChangedLines())}</div>
             <div class="pure-u-5-24">
-              <a href="${fileEntry.get().getCommitUrl()}" class="${linkClass}">${fileEntry.get().getCommitRevision()}</a>
+              <a href="${fileEntry.get().getCommitUrl()}" class="${cssLink}">${fileEntry.get().getCommitRevision()}</a>
             </div>
             <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
             <div class="pure-u-14-24">
-              <a href="${fileEntry.get().getCommitFileUrl()}" class="${linkClass}">${fileEntry.get().getNewPath()}</a>
+              <a href="${fileEntry.get().getCommitFileUrl()}" class="${cssLink}">${fileEntry.get().getNewPath()}</a>
             </div>
           </div>
         @endfor
