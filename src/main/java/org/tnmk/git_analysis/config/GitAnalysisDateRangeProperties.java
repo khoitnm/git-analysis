@@ -1,6 +1,7 @@
 package org.tnmk.git_analysis.config;
 
 import jakarta.annotation.Nullable;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,6 +20,9 @@ public class GitAnalysisDateRangeProperties {
   private String startDate;
   @Nullable
   private String endDate;
+
+  @Getter
+  private boolean fetch;
 
   public LocalDateTime getStartDate() {
     LocalDate localDate = LocalDate.parse(startDate, dateTimeFormatter);

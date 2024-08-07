@@ -12,7 +12,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.*;
 import org.tnmk.git_analysis.config.GitAnalysisIgnoreProperties;
-import org.tnmk.git_analysis.git_connection.GitSshHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +37,11 @@ public class GitRepoAnalyzer {
       Repository repository = git.getRepository();
     ) {
       if (fetch) {
-
-        git.fetch()
-          .setTransportConfigCallback(GitSshHelper.createTransportConfigCallback())
-//          .setCredentialsProvider(new NetRCCredentialsProvider())
-          // .setRefSpecs(new RefSpec(remoteBranchName + ":" + remoteBranchName))
-          .setTimeout(60) // Increase timeout to 60 seconds
-          .call();
-        log.info("Fetched {}!", repoPath);
+        try {
+          GitUpdateHelper.fetchLatestContent(repoPath, git, repository);
+        } catch (GitAPIException | JSchException | IOException e) {
+          log.warn("Cannot fetch latest content of {}.", repoPath, e);
+        }
       }
       log.info("Analyzing {}...", repoPath);
 
@@ -101,4 +97,5 @@ public class GitRepoAnalyzer {
       return members;
     }
   }
+
 }
