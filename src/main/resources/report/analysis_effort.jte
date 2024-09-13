@@ -1,4 +1,5 @@
 @import gg.jte.support.ForSupport
+@import org.apache.commons.lang3.StringUtils
 @import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter
 @import org.tnmk.git_analysis.analyze_effort.report.GitFoldersReportHelper
 @import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos
@@ -330,6 +331,32 @@
             <div class="pure-u-14-24">
               <a href="${fileEntry.get().getCommitFileUrl()}" class="${cssLink}">${fileEntry.get().getNewPath()}</a>
             </div>
+          </div>
+        @endfor
+      </div>
+    </details>
+
+    <!-- Top tickets -->
+    <details class="" open>
+      !{ var commitTasks = member.commitTasks();}
+      <summary class="repo-report-item repo-report-item-main">All tickets: ${commitTasks.size()}</summary>
+      <div class="pure-g file-item nested-1">
+        <div class="pure-u-1-24">#</div>
+        <div class="pure-u-3-24">Ticket</div>
+        <div class="pure-u-3-24">Words</div>
+        <div class="pure-u-3-24">Lines</div>
+        <div class="pure-u-3-24">Files</div>
+      </div>
+      <div class="files-container">
+
+        @for (var taskEntry : ForSupport.of(commitTasks))
+          !{ var displayTicketId = taskEntry.get().isUnknownTicket() ? "No ticket" : taskEntry.get().getTicketId();}
+          <div class="pure-g file-item nested-1" title="${displayTicketId}">
+            <div class="pure-u-1-24">${taskEntry.getIndex() + 1}</div>
+            <div class="pure-u-3-24">${displayTicketId}</div>
+            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getWords())}</div>
+            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getLines())}</div>
+            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getFiles())}</div>
           </div>
         @endfor
       </div>

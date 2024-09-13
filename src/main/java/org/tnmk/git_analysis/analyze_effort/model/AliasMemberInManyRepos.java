@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.tnmk.git_analysis.analyze_effort.AliasMemberHelper;
+import org.tnmk.git_analysis.analyze_effort.GitCommitTicketHelper;
 import org.tnmk.git_analysis.analyze_effort.report.ReportCommitHelper;
 
 import java.util.List;
@@ -38,6 +39,10 @@ public class AliasMemberInManyRepos {
 
   public int commitsSize() {
     return memberInRepos.stream().mapToInt(memberInOneRepo -> memberInOneRepo.getAliasMember().commitsSize()).sum();
+  }
+
+  public List<CommitTask> commitTasks() {
+    return GitCommitTicketHelper.toCommitTasks(this);
   }
 
   public int totalFiles() {
