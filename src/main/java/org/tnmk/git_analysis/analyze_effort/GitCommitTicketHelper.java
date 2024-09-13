@@ -36,6 +36,8 @@ public class GitCommitTicketHelper {
     // key: ticketId;
     // value: the list of commits in that ticket.
     Map<String, List<CommitResult>> commitResults = member.commits().stream()
+      // DON'T COUNT MERGE COMMIT
+      .filter(commit -> commit.isNotMergeCommit())
       .collect(Collectors.groupingBy(
         // key of a map cannot be null.
         commit -> commit.getTicketId() == null ? "" : commit.getTicketId())

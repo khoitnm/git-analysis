@@ -91,4 +91,12 @@ public class CommitResult {
   public String getAuthor() {
     return CommitAuthorPolicy.getCommitAuthor(committer, implementor);
   }
+
+  public boolean isMergeCommit() {
+    return commitType == CommitType.REGULAR_MERGE || commitType == CommitType.PULL_REQUEST;
+  }
+
+  public boolean isNotMergeCommit() {
+    return !isMergeCommit();
+  }
 }
