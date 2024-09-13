@@ -360,6 +360,8 @@
             <th>Words</th>
             <th>Lines</th>
             <th>Files</th>
+            <th>First Commit</th>
+            <th>Last Commit</th>
           </tr>
           </thead>
           <tbody>
@@ -377,6 +379,8 @@
               <td>${decimalFormat.format(taskEntry.get().getWords())}</td>
               <td>${decimalFormat.format(taskEntry.get().getLines())}</td>
               <td>${decimalFormat.format(taskEntry.get().getFiles())}</td>
+              <td>${commitDateTimeFormatter.format(taskEntry.get().getFirstCommitDateTime())}</td>
+              <td>${commitDateTimeFormatter.format(taskEntry.get().getLastCommitDateTime())}</td>
             </tr>
           @endfor
           </tbody>

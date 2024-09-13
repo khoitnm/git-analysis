@@ -6,6 +6,7 @@ import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommitTask;
 import org.tnmk.git_analysis.analyze_effort.model.GitRepo;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -60,13 +61,33 @@ public class GitCommitTicketHelper {
         commit -> commit.getTicketId() == null ? "" : commit.getTicketId())
       );
     return commitResults.entrySet().stream()
-      .map(entry -> CommitTask.builder()
-        .ticketId(entry.getKey())
-        .commits(entry.getValue())
-        .build())
+      .map(entry -> {
+        List<CommitResult> commits = entry.getValue();
+
+        return CommitTask.builder()
+          .ticketId(entry.getKey())
+          .commits(commits)
+          .firstCommitDateTime(findFirstCommitDateTime(commits))
+          .lastCommitDateTime(findLastCommitDateTime(commits))
+          .build();
+      })
       //.sorted(compareTaskByTicketId())
       .sorted(compareTasksByWords().reversed())
       .toList();
+  }
+
+  private static LocalDateTime findLastCommitDateTime(List<CommitResult> commits) {
+    return commits.stream()
+      .map(CommitResult::getCommitDateTime)
+      .max(LocalDateTime::compareTo)
+      .orElseThrow();
+  }
+
+  private static LocalDateTime findFirstCommitDateTime(List<CommitResult> commits) {
+    return commits.stream()
+      .map(CommitResult::getCommitDateTime)
+      .min(LocalDateTime::compareTo)
+      .orElseThrow();
   }
 
   private static Comparator<CommitTask> compareTasksByWords() {

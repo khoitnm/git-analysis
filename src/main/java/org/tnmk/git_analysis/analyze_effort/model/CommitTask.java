@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.tnmk.git_analysis.analyze_effort.GitCommitTicketHelper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -13,6 +14,8 @@ public class CommitTask {
   @Nullable
   private final String ticketId;
   private final List<CommitResult> commits;
+  private final LocalDateTime firstCommitDateTime;
+  private final LocalDateTime lastCommitDateTime;
 
   public GitRepo getGitRepo() {
     return commits.get(0).getGitRepo();
