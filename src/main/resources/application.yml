@@ -6,6 +6,8 @@ git-analysis.date-range.start-date: 2024-01-01
 git-repo.repositories:
   - host: github.com
     service-type: GITHUB
+    # Just a sample URL, you should replace it with your own JIRA URL
+    ticket-url-prefix: https://jira.sample-org.com/jira/browse
   - host: bitbucket.org
     service-type: BITBUCKET
 
