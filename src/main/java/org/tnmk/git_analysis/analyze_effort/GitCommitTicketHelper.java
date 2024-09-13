@@ -5,6 +5,7 @@ import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommitTask;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,15 +45,28 @@ public class GitCommitTicketHelper {
         .ticketId(entry.getKey())
         .commits(entry.getValue())
         .build())
-      .sorted((task1, task2) -> {
-        if (StringUtils.isBlank(task1.getTicketId())) {
-          return 1;
-        }
-        if (StringUtils.isBlank(task2.getTicketId())) {
-          return -1;
-        }
-        return task1.getTicketId().compareTo(task2.getTicketId());
-      })
+      //.sorted(compareTaskByTicketId())
+      .sorted(compareTasksByWords().reversed())
       .toList();
+  }
+
+  private static Comparator<CommitTask> compareTasksByWords() {
+    return (task1, task2) -> Math.toIntExact(task1.getWords() - task2.getWords());
+  }
+
+  /**
+   * @return Sort tasks by ticketId, so the unknown ticket will be at the end.
+   */
+  private static Comparator<CommitTask> compareTasksByTicketId() {
+
+    return (task1, task2) -> {
+      if (StringUtils.isBlank(task1.getTicketId())) {
+        return 1;
+      }
+      if (StringUtils.isBlank(task2.getTicketId())) {
+        return -1;
+      }
+      return task1.getTicketId().compareTo(task2.getTicketId());
+    };
   }
 }
