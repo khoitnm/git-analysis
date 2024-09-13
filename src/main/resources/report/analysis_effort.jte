@@ -351,8 +351,7 @@
     <details class="" open>
       !{ var commitTasks = member.commitTasks();}
       <summary class="repo-report-item repo-report-item-main">All tickets: ${commitTasks.size()}</summary>
-      <div class="nested-1">
-
+      <div class="files-container nested-1">
         <table class="tablesorter">
           <thead>
           <tr>
