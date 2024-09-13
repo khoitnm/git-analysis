@@ -28,6 +28,9 @@
 <html lang="english">
 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css">
 <head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <title>Repos Analysis: ${fromDateTime.format(reportDateTimeFormatter)} - ${toDateTime.format(reportDateTimeFormatter)}</title>
 </head>
@@ -348,31 +351,37 @@
     <details class="" open>
       !{ var commitTasks = member.commitTasks();}
       <summary class="repo-report-item repo-report-item-main">All tickets: ${commitTasks.size()}</summary>
-      <div class="pure-g file-item nested-1">
-        <div class="pure-u-1-24">#</div>
-        <div class="pure-u-3-24">Ticket</div>
-        <div class="pure-u-3-24">Words</div>
-        <div class="pure-u-3-24">Lines</div>
-        <div class="pure-u-3-24">Files</div>
-      </div>
-      <div class="files-container">
+      <div class="nested-1">
 
-        @for (var taskEntry : ForSupport.of(commitTasks))
-          !{ var displayTicketId = taskEntry.get().isUnknownTicket() ? "No ticket" : taskEntry.get().getTicketId();}
-          <div class="pure-g file-item nested-1" title="${displayTicketId}">
-            <div class="pure-u-1-24">${taskEntry.getIndex() + 1}</div>
-            <div class="pure-u-3-24">
-              @if (!taskEntry.get().isUnknownTicket())
-                <a href="${taskEntry.get().getTicketUrl()}" class="commit-link">${displayTicketId}</a>
-              @else
-                ${displayTicketId}
-              @endif
-            </div>
-            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getWords())}</div>
-            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getLines())}</div>
-            <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getFiles())}</div>
-          </div>
-        @endfor
+        <table class="tablesorter">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Ticket</th>
+            <th>Words</th>
+            <th>Lines</th>
+            <th>Files</th>
+          </tr>
+          </thead>
+          <tbody>
+          @for (var taskEntry : ForSupport.of(commitTasks))
+            !{ var displayTicketId = taskEntry.get().isUnknownTicket() ? "No ticket" : taskEntry.get().getTicketId();}
+            <tr title="${displayTicketId}">
+              <td>${taskEntry.getIndex() + 1}</td>
+              <td>
+                @if (!taskEntry.get().isUnknownTicket())
+                  <a href="${taskEntry.get().getTicketUrl()}" class="commit-link">${displayTicketId}</a>
+                @else
+                  ${displayTicketId}
+                @endif
+              </td>
+              <td>${decimalFormat.format(taskEntry.get().getWords())}</td>
+              <td>${decimalFormat.format(taskEntry.get().getLines())}</td>
+              <td>${decimalFormat.format(taskEntry.get().getFiles())}</td>
+            </tr>
+          @endfor
+          </tbody>
+        </table>
       </div>
     </details>
   @endfor
@@ -513,6 +522,11 @@
   }
 
   showCommitsMetrics();
+</script>
+<script>
+  $(document).ready(function () {
+    $(".tablesorter").tablesorter();
+  });
 </script>
 </body>
 </html>
