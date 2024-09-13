@@ -27,6 +27,7 @@ public class GitRepoService {
       .projectName(projectName)
       .repoName(repoName)
       .serviceType(gitRepoConfigProperties.getServiceType())
+      .ticketUrlPrefix(gitRepoConfigProperties.getTicketUrlPrefix())
       .build();
   }
 

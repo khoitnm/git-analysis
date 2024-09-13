@@ -351,9 +351,13 @@
 
         @for (var taskEntry : ForSupport.of(commitTasks))
           !{ var displayTicketId = taskEntry.get().isUnknownTicket() ? "No ticket" : taskEntry.get().getTicketId();}
+          !{String ticketCssLink = "commit-link " + (taskEntry.get().isUnknownTicket() ? "test-file" : "");}
+
           <div class="pure-g file-item nested-1" title="${displayTicketId}">
             <div class="pure-u-1-24">${taskEntry.getIndex() + 1}</div>
-            <div class="pure-u-3-24">${displayTicketId}</div>
+            <div class="pure-u-3-24">
+              <a href="${taskEntry.get().getTicketUrl()}" class="${ticketCssLink}">${displayTicketId}</a>
+            </div>
             <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getWords())}</div>
             <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getLines())}</div>
             <div class="pure-u-3-24">${decimalFormat.format(taskEntry.get().getFiles())}</div>

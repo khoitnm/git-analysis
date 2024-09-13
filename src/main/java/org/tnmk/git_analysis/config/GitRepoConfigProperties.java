@@ -10,4 +10,5 @@ public class GitRepoConfigProperties {
   private String host;
   private GitServiceType serviceType;
   private String accessToken;
+  private String ticketUrlPrefix;
 }

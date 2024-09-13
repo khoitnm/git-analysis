@@ -1,5 +1,6 @@
 package org.tnmk.git_analysis.analyze_effort.model;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -19,4 +20,7 @@ public class GitRepo {
   private final String repoName;
   @NonNull
   private final GitServiceType serviceType;
+
+  @Nullable
+  private String ticketUrlPrefix;
 }
