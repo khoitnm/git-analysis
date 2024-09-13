@@ -43,7 +43,7 @@ public class CommitResult {
   @NonNull
   private final CommitType commitType;
   @NonNull
-  private final List<CommittedFile> files;
+  private final List<CommitFile> files;
   @NonNull
   private final GitRepo gitRepo;
 
@@ -65,23 +65,23 @@ public class CommitResult {
   }
 
   public int getLinesCount() {
-    return files.stream().mapToInt(CommittedFile::getChangedLines).sum();
+    return files.stream().mapToInt(CommitFile::getChangedLines).sum();
   }
 
   public int getWordsCount() {
-    return files.stream().mapToInt(CommittedFile::getChangedWords).sum();
+    return files.stream().mapToInt(CommitFile::getChangedWords).sum();
   }
 
   public int getTestWordsCount() {
-    return files.stream().filter(CommittedFile::isTestFile).mapToInt(CommittedFile::getChangedWords).sum();
+    return files.stream().filter(CommitFile::isTestFile).mapToInt(CommitFile::getChangedWords).sum();
   }
 
   public int getTestLinesCount() {
-    return files.stream().filter(CommittedFile::isTestFile).mapToInt(CommittedFile::getChangedLines).sum();
+    return files.stream().filter(CommitFile::isTestFile).mapToInt(CommitFile::getChangedLines).sum();
   }
 
   public int getTestFilesCount() {
-    return (int) files.stream().filter(CommittedFile::isTestFile).count();
+    return (int) files.stream().filter(CommitFile::isTestFile).count();
   }
 
   public String getCommitUrl() {

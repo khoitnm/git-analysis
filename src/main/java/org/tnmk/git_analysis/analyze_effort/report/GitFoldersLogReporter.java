@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo;
-import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
+import org.tnmk.git_analysis.analyze_effort.model.CommitFile;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
@@ -75,15 +75,15 @@ public class GitFoldersLogReporter {
   }
 
   private String reportTopChangedFilesOfMember(AliasMemberInManyRepos member) {
-    List<CommittedFile> sortedFiles = GitFoldersReportHelper.sortCommitsByTotalWords(member);
+    List<CommitFile> sortedFiles = GitFoldersReportHelper.sortCommitsByTotalWords(member);
     return reportFiles(sortedFiles);
   }
 
-  private String reportFiles(List<CommittedFile> sortedFiles) {
+  private String reportFiles(List<CommitFile> sortedFiles) {
     return sortedFiles.stream().map(this::reportFile).collect(Collectors.joining("\n"));
   }
 
-  private String reportFile(CommittedFile file) {
+  private String reportFile(CommitFile file) {
     String report = "\twords: %s, commit: %s, date: %s, file: %s"
       .formatted(
         file.getChangedWords(),

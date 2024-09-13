@@ -1,16 +1,19 @@
 package org.tnmk.git_analysis.analyze_effort.model;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.tnmk.git_analysis.analyze_effort.CheckTestFilePolicy;
 import org.tnmk.git_analysis.analyze_effort.GitCommitHelper;
+import org.tnmk.git_analysis.analyze_effort.GitCommitTicketHelper;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class CommittedFile {
+public class CommitFile {
   @NonNull
   private final GitRepo gitRepo;
   /**
@@ -29,6 +32,20 @@ public class CommittedFile {
   private final String commitRevision;
   @NonNull
   private final LocalDateTime commitDateTime;
+
+  /**
+   * A commit may not have any information about the ticket.
+   */
+  @Nullable
+  private final String ticketId;
+
+  public boolean hasTicket() {
+    return StringUtils.isNotBlank(ticketId);
+  }
+
+  public String getTicketUrl() {
+    return GitCommitTicketHelper.getTicketUrl(gitRepo, ticketId);
+  }
 
   public String getCommitUrl() {
     return GitCommitHelper.getCommitUrl(gitRepo, commitRevision);

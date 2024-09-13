@@ -1,8 +1,8 @@
 package org.tnmk.git_analysis.analyze_effort.report;
 
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
+import org.tnmk.git_analysis.analyze_effort.model.CommitFile;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
-import org.tnmk.git_analysis.analyze_effort.model.CommittedFile;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,10 +43,10 @@ public class GitFoldersReportHelper {
     return members.stream().sorted(memberComparator).toList();
   }
 
-  public static List<CommittedFile> sortCommitsByTotalWords(AliasMemberInManyRepos member) {
-    Stream<CommittedFile> files = member.commits().stream().flatMap(commit -> commit.getFiles().stream());
-    List<CommittedFile> sortedFiles = files.sorted(
-      Comparator.comparingInt(CommittedFile::getChangedWords).reversed()
+  public static List<CommitFile> sortCommitsByTotalWords(AliasMemberInManyRepos member) {
+    Stream<CommitFile> files = member.commits().stream().flatMap(commit -> commit.getFiles().stream());
+    List<CommitFile> sortedFiles = files.sorted(
+      Comparator.comparingInt(CommitFile::getChangedWords).reversed()
     ).limit(TOP_FILES_TO_REPORT_PER_MEMBER).toList();
     return sortedFiles;
   }

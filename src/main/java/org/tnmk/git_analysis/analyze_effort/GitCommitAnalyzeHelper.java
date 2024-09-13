@@ -46,11 +46,18 @@ public class GitCommitAnalyzeHelper {
           .commitResult(Optional.empty())
           .build();
       }
+
+      String mergeTargetBranch = null;
+      if (commitDiffs.getCommitType() == CommitType.PULL_REQUEST) {
+        mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
+      }
+      Optional<String> ticketId = GitCommitTicketHelper.extractTicketId(commit.getFullMessage());
+
       // TODO In some repos such as SC, must exclude merged to `master` branch because it's duplicated with PRs to dev.
       List<DiffEntry> diffEntries = commitDiffs.getDiffEntries();
 
       // This is the list of different files in the commit.
-      List<CommittedFile> files = new ArrayList<>();
+      List<CommitFile> files = new ArrayList<>();
       for (DiffEntry diffEntry : diffEntries) {
         if (diffEntry.getChangeType() == DiffEntry.ChangeType.DELETE) {
           continue;
@@ -65,23 +72,19 @@ public class GitCommitAnalyzeHelper {
 
         int changedWords = GitDiffWordHelper.countWordsChangedInFile(repository, diffFormatter, diffEntry);
 
-        CommittedFile file = CommittedFile.builder()
+        CommitFile file = CommitFile.builder()
           .gitRepo(gitRepo)
           .newFileId(diffEntry.getNewId().toObjectId().getName())
           .newPath(diffEntry.getNewPath())
           .changedLines(changedLines)
           .changedWords(changedWords)
-
+          .ticketId(ticketId.orElse(null))
           .commitRevision(commitRevision)
           .commitDateTime(commitDateTime)
           .build();
         files.add(file);
       }
-      String mergeTargetBranch = null;
-      if (commitDiffs.getCommitType() == CommitType.PULL_REQUEST) {
-        mergeTargetBranch = GitBranchHelper.getTargetBranchOfMerge(repository, commit);
-      }
-      Optional<String> ticketId = GitCommitTicketHelper.extractTicketId(commit.getFullMessage());
+
       Optional<CommitResult> commitResult = Optional.of(CommitResult.builder()
         .gitRepo(gitRepo)
         .committer(commitDiffs.getCommitter())

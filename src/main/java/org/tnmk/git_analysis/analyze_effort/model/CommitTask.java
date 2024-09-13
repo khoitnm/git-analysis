@@ -3,7 +3,7 @@ package org.tnmk.git_analysis.analyze_effort.model;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import org.tnmk.git_analysis.analyze_effort.GitCommitTicketHelper;
 
 import java.util.List;
 
@@ -19,15 +19,7 @@ public class CommitTask {
   }
 
   public String getTicketUrl() {
-    String ticketUrlPrefix = getGitRepo().getTicketUrlPrefix();
-    if (isUnknownTicket()) {
-      return "#";
-    }
-    if (StringUtils.isBlank(ticketUrlPrefix)) {
-      return "#" + ticketId;
-    } else {
-      return ticketUrlPrefix + "/" + ticketId;
-    }
+    return GitCommitTicketHelper.getTicketUrl(getGitRepo(), ticketId);
   }
 
   public long commitsSize() {
@@ -47,6 +39,6 @@ public class CommitTask {
   }
 
   public boolean isUnknownTicket() {
-    return ticketId == null || ticketId.isBlank();
+    return GitCommitTicketHelper.isUnknownTicket(ticketId);
   }
 }

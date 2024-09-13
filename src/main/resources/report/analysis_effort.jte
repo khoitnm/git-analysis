@@ -313,8 +313,9 @@
         <div class="pure-u-1-24">Words</div>
         <div class="pure-u-1-24">Lines</div>
         <div class="pure-u-5-24">CommitId</div>
+        <div class="pure-u-2-24">Ticket</div>
         <div class="pure-u-2-24">DateTime</div>
-        <div class="pure-u-14-24">File</div>
+        <div class="pure-u-12-24">File</div>
       </div>
       <div class="files-container">
         @for (var fileEntry : ForSupport.of(GitFoldersReportHelper.sortCommitsByTotalWords(member)))
@@ -327,8 +328,15 @@
             <div class="pure-u-5-24">
               <a href="${fileEntry.get().getCommitUrl()}" class="${cssLink}">${fileEntry.get().getCommitRevision()}</a>
             </div>
+            <div class="pure-u-2-24">
+              @if (fileEntry.get().hasTicket())
+                <a href="${fileEntry.get().getTicketUrl()}" class="${cssLink}">${fileEntry.get().getTicketId()}</a>
+              @else
+                No Ticket
+              @endif
+            </div>
             <div class="pure-u-2-24">${commitDateTimeFormatter.format(fileEntry.get().getCommitDateTime())}</div>
-            <div class="pure-u-14-24">
+            <div class="pure-u-12-24">
               <a href="${fileEntry.get().getCommitFileUrl()}" class="${cssLink}">${fileEntry.get().getNewPath()}</a>
             </div>
           </div>

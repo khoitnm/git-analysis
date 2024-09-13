@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
 import org.tnmk.git_analysis.analyze_effort.model.CommitResult;
 import org.tnmk.git_analysis.analyze_effort.model.CommitTask;
+import org.tnmk.git_analysis.analyze_effort.model.GitRepo;
 
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,22 @@ public class GitCommitTicketHelper {
       }
     }
     return Optional.empty();
+  }
+
+  public static String getTicketUrl(GitRepo repo, String ticketId) {
+    String ticketUrlPrefix = repo.getTicketUrlPrefix();
+    if (isUnknownTicket(ticketId)) {
+      return "#";
+    }
+    if (StringUtils.isBlank(ticketUrlPrefix)) {
+      return "#" + ticketId;
+    } else {
+      return ticketUrlPrefix + "/" + ticketId;
+    }
+  }
+
+  public static boolean isUnknownTicket(String ticketId) {
+    return StringUtils.isBlank(ticketId);
   }
 
   public static List<CommitTask> toCommitTasks(AliasMemberInManyRepos member) {
