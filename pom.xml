@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
     <spring-boot.version>3.1.1</spring-boot.version>
-    <commons-io.version>2.11.0</commons-io.version>
+    <commons-io.version>2.14.0</commons-io.version>
     <poi.version>5.2.3</poi.version>
     <jte.version>3.1.12</jte.version>
 
