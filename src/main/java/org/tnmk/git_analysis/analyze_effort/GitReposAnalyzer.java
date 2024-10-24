@@ -3,12 +3,10 @@ package org.tnmk.git_analysis.analyze_effort;
 import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.stereotype.Service;
-import org.tnmk.git_analysis.analyze_effort.model.AliasMember;
-import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInManyRepos;
-import org.tnmk.git_analysis.analyze_effort.model.AliasMemberInRepo;
-import org.tnmk.git_analysis.analyze_effort.model.Member;
+import org.tnmk.git_analysis.analyze_effort.model.*;
 import org.tnmk.git_analysis.analyze_effort.report.GitFoldersHtmlReporter;
 import org.tnmk.git_analysis.config.GitAliasProperties;
 
@@ -26,15 +24,29 @@ public class GitReposAnalyzer {
   private final MemberFilter memberFilter;
   private final MemberMergerByAlias mergeMembers;
   private final GitRepoAnalyzer gitRepoAnalyzer;
+  private final GitRepoFetcher gitRepoFetcher;
 
   public void analyzeManyRepos(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, List<String> repoPaths, boolean fetch)
-    throws GitAPIException, IOException, JSchException {
+    throws IOException {
     log.info("StartTimeToAnalyze: " + startTimeToAnalyze);
 
     List<AliasMemberInRepo> aliasMembersInManyRepos = new ArrayList<>();
     List<List<String>> aliasesOfMembers = gitAliasProperties.parseAliasesOfMembers();
     Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
 
+    // This cannot be run in parallel.
+    List<GitFetchResult> errors = repoPaths.stream()
+      .map(gitRepoFetcher::getLatestCode)
+      .filter(GitFetchResult::hasError).toList();
+    if (!errors.isEmpty()) {
+      log.warn("Cannot fetch latest code of some repos: {}",
+        errors.stream()
+          .filter(result -> result.getError() != null)
+          .map(result -> "\n\t" + result.getRepoPath() + ": " + StringUtils.substring(result.getError().getMessage(), 0, 300)).toList()
+      );
+    }
+
+    // This process can be run in parallel.
     repoPaths.stream().parallel().forEach(repositoryPath -> {
       try {
         Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);

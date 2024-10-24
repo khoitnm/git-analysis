@@ -36,13 +36,6 @@ public class GitRepoAnalyzer {
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();
     ) {
-      if (fetch) {
-        try {
-          GitUpdateHelper.fetchLatestContent(repoPath, git, repository);
-        } catch (GitAPIException | JSchException | IOException e) {
-          log.warn("Cannot fetch latest content of {}.", repoPath, e);
-        }
-      }
       log.info("Analyzing {}...", repoPath);
 
       GitRepo gitRepo = gitRepoService.createGitRepo(repository);
@@ -97,5 +90,6 @@ public class GitRepoAnalyzer {
       return members;
     }
   }
+
 
 }
