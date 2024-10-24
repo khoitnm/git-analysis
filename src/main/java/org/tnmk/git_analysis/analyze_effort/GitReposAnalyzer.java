@@ -42,7 +42,7 @@ public class GitReposAnalyzer {
       log.warn("Cannot fetch latest code of some repos: {}",
         errors.stream()
           .filter(result -> result.getError() != null)
-          .map(result -> "\n\t" + result.getRepoPath() + ": " + StringUtils.substring(result.getError().getMessage(), 0, 300)).toList()
+          .map(result -> "\n\t" + result.getRepoPath() + ": " + StringUtils.substring(result.getError().getMessage(), 0, 100)).toList()
       );
     }
 
