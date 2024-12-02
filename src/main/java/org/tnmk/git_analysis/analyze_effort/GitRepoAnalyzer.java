@@ -31,7 +31,7 @@ public class GitRepoAnalyzer {
   /**
    * @return Map of members: key: member name, value: member.
    */
-  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, String repoPath, boolean fetch, Set<String> onlyIncludeMembers) throws GitAPIException, IOException, JSchException {
+  public Map<String, Member> analyzeOneRepo(LocalDateTime startTimeToAnalyze, LocalDateTime endTimeToAnalyze, String repoPath, Set<String> onlyIncludeMembers) throws GitAPIException, IOException, JSchException {
     try (
       Git git = Git.open(new File(repoPath));
       Repository repository = git.getRepository();

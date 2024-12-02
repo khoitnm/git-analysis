@@ -35,21 +35,23 @@ public class GitReposAnalyzer {
     Set<String> onlyIncludeMembers = memberFilter.getOnlyIncludeMembers(aliasesOfMembers);
 
     // This cannot be run in parallel.
-    List<GitFetchResult> errors = repoPaths.stream()
-      .map(gitRepoFetcher::getLatestCode)
-      .filter(GitFetchResult::hasError).toList();
-    if (!errors.isEmpty()) {
-      log.warn("Cannot fetch latest code of some repos: {}",
-        errors.stream()
-          .filter(result -> result.getError() != null)
-          .map(result -> "\n\t" + result.getRepoPath() + ": " + StringUtils.substring(result.getError().getMessage(), 0, 100)).toList()
-      );
+    if (fetch) {
+      List<GitFetchResult> errors = repoPaths.stream()
+        .map(gitRepoFetcher::getLatestCode)
+        .filter(GitFetchResult::hasError).toList();
+      if (!errors.isEmpty()) {
+        log.warn("Cannot fetch latest code of some repos: {}",
+          errors.stream()
+            .filter(result -> result.getError() != null)
+            .map(result -> "\n\t" + result.getRepoPath() + ": " + StringUtils.substring(result.getError().getMessage(), 0, 100)).toList()
+        );
+      }
     }
 
     // This process can be run in parallel.
     repoPaths.stream().parallel().forEach(repositoryPath -> {
       try {
-        Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, fetch, onlyIncludeMembers);
+        Map<String, Member> membersInOneRepo = gitRepoAnalyzer.analyzeOneRepo(startTimeToAnalyze, endTimeToAnalyze, repositoryPath, onlyIncludeMembers);
 
         List<AliasMember> members = mergeMembers.mergeMembersWithSameAlias(membersInOneRepo.values());
         List<AliasMemberInRepo> aliasMembersInOneRepo = members.stream()
