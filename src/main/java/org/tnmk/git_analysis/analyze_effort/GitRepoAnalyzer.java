@@ -86,7 +86,7 @@ public class GitRepoAnalyzer {
           members.put(author, member);
         }
       }
-      log.info("\tIgnored members: " + ignoredMembers);
+      log.info("Ignored members {}:\n\t{}", repoPath, ignoredMembers);
       return members;
     }
   }
