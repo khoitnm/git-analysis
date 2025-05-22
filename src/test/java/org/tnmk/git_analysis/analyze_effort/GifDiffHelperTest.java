@@ -21,11 +21,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class GifDiffHelperTest {
   @Test
   public void test() throws IOException {
-    try (Git git = Git.open(new File("somePath"))) {
+    try (Git git = Git.open(new File("C:\\Projects\\Personal\\git-analysis"))) {
       Repository repository = git.getRepository();
 
       DiffFormatter diffFormatter = GitDiffHelper.createDiffFormatter(repository);
-      RevCommit commit = repository.parseCommit(repository.resolve("someCommitRevision"));
+      RevCommit commit = repository.parseCommit(repository.resolve("b7ac8349cceeda329513b64dc3ee815e74b661ff"));
       CommitDiffs commitDiffs = GitDiffHelper.findDiff(diffFormatter, commit);
       log.info("Diffs:\n" +
         commitDiffs.getDiffEntries().stream().map(DiffEntry::toString).collect(Collectors.joining("\n"))
